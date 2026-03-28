@@ -13,3 +13,7 @@ debug/
 *.rst
 *.sym
 
+#Remove the legacy README
+README.md
+hash.out
+opcodes.cpp

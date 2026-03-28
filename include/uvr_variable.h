@@ -9,7 +9,7 @@
 //=============================== PAGE ONE VARIABLES ============================================
 volatile unsigned char __data __at (0x30) loop_counter = 0; //Store Loop Counters
 
-volatile unsigned char __data __at (0x31)  prog_counter = 0; //Store Program Counters
+volatile unsigned char __data __at (0x31)  prog_counter; //Store Program Counters
 volatile unsigned char __data __at (0x32)  *rd_pointer;
 volatile unsigned char __data __at (0x33)  *wr_pointer;
 
@@ -23,7 +23,6 @@ volatile unsigned char __data __at (0x39) temp1 = 0;
 volatile unsigned char __data __at (0x3A) temp2 = 0; //Temporary Variables
 volatile unsigned char __data __at (0x3C) temp3 = 0;
 
-
 volatile unsigned char __data __at (0x3D) instruction_buffer =0;
 volatile unsigned char __data __at (0x3E) result_l = 0;
 volatile unsigned char __data __at (0x3F) result_h = 0;
@@ -35,5 +34,6 @@ volatile unsigned char __data __at (0x40) prog_buffer[32] = {0};
 
 //============================== FLAGS ===========================
 __bit __at(0x00) is_recieved;
+__bit __at(0x01) infinite_exec;
 
 #endif //uvr_variable_h

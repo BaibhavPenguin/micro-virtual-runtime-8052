@@ -2,15 +2,18 @@
 #include "uvr_variable.h"
 #include "uvr_const.h"
 #include "ios.h"
+#include "parser.h"
 
 void init_sys(void){
 	EA = 1;
 	ES = 1;
 	ET2 = 1;
 	is_recieved = 0;
+	infinite_exec = 0;
 
 	wr_pointer = &prog_buffer[0];
 	rd_pointer = &prog_buffer[0];
+	prog_counter = 0;
 } 
 
 void init_timer(void){
@@ -53,39 +56,33 @@ void echo(void){
 		default:
 			uart_send(*rd_pointer);
 	};
-	rd_pointer++;
-	is_recieved = 0;
+	
+	
 
 }
 
 
-
-
-
-void delay_ms_500(void){
-
+void parse_cmd(void){
+	if(prog_buffer[prog_counter] == whitespc){
+		prog_counter++;
+	};
+	//while(prog_buffer[prog_counter] != whitespc){
+		temp1 = prog_buffer[prog_counter];
+		prog_counter++;
+		temp1 =  temp1 ^ (hsh_key & prog_buffer[prog_counter]);
+		prog_counter++;
+		temp1 = (temp1 >> 1) ^ prog_buffer[prog_counter];
+		instruction_buffer = temp1;
+		prog_counter++;
+		uart_send(instruction_buffer);
+	//}
 	
 }
 
 
-
-
-void ascii_to_hex(void){
-
-	
-}
-
-
-
-
-
-void hex_to_ascii(void){
-
-	
-}
-
-
-
+void delay_ms_500(void){}
+void ascii_to_hex(void){}
+void hex_to_ascii(void){}
 
 void print_boot_message(void){
 	temp0 = 0;
@@ -117,8 +114,8 @@ void Serial_ISR(void) __interrupt(4)
 {
 	if(RI){
 		*wr_pointer = SBUF;
-		is_recieved = 1;
 		wr_pointer++;
+		is_recieved = 1;
 		RI = 0;
 	}
 }
@@ -143,6 +140,23 @@ void main(void){
 
 	while(1){
 		echo();
+		switch(*rd_pointer){
+			case c_enter:
+				ES = 0;				//Disable Serial Interrupt;
+				parse_cmd();
+				ES = 1;
+			default:
+			rd_pointer++;
+		}
+		if(wr_pointer > &prog_buffer[32]){
+			wr_pointer = &prog_buffer[0];
+		};
+		if(rd_pointer > &prog_buffer[32]){
+			rd_pointer = &prog_buffer[0];
+		};
+		is_recieved = 0;
+		
+
 	}
 }
 	

@@ -161,4 +161,40 @@ Completely Developed by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
 	#Removed declarations with "Redundant" flags
 	#buffer system now is simplified to "&prog_buffer[0]";
 	
-	
+#IMPORTANT!!!!!! : 28-03-2026
+	#Complete Redesign of the Command Architecture.
+
+	#New Supported Commands
+
+	"add" data1,data2
+	"sub" data1,data2
+	"mul" data1,data2
+	"div" data1,data2
+	"and" data,data2
+	"or " data1,data2
+	"not" data
+	"xor" data1,data2
+	"--o"  data , port
+	"--i" data,port
+	"ext"
+	"--c" data
+	"--r"
+	"del" data
+	"cls"
+	"tog" data,port,iteration
+	"--f" (tr or fr)
+
+#Added Parser and Complete ByteCode execution sysrem 28-03-2026
+
+	hash key = 00111111 (0x3F)
+	Hashing Alhgorithm.
+	The three bytes are byte1 , byte2 , byte3 respectively.
+	instruction = byte1 XOR (byte2 AND hash key)
+	instruction = instruction >> 1
+	instruction = instruction ^ byte3
+
+#Fixed Buffer Overflow and Buffer Underflow issues 28-03-2026
+
+#Groundwork laid for execution sequence and scheduler.
+
+

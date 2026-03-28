@@ -35,7 +35,7 @@ B**linking LED Program for At89S52 in C**
     `}`  
 `}`
 
-**`Live Blinking LED via Micro Virtual-R`** 
+**Live Blinking LED via Micro Virtual-R** 
 
 `# 255 , 0 , p1 , i`
 
@@ -46,8 +46,9 @@ Micro Virtual-R reduces the amount of programming and eliminates the need of con
 ## **Memory Footprint**
 
 The entire runtime utilises 90 bytes of Memory.
+<img width="960" height="720" alt="new_memory_map" src="https://github.com/user-attachments/assets/aa1bbcd7-08a7-42cb-966c-acc8089b76ba" />
 
-\#Image Here
+
 
 ## **Supported Commands**
 
@@ -72,12 +73,15 @@ output: p0 , p1 , p2 , p3 , si
 
 data1 : Any decimal number between 0-255  
 data2 : Any decimal number between 0-255  
+
+
 **Subtract  ‘-’	 v0.02release**
 
 `- data1 data2`
 
 data1 : Any decimal number between 0-255  
 data2 : Any decimal number between 0-255
+
 
 **Multiply  ‘\*’ 	v0.02release**
 
@@ -86,12 +90,14 @@ data2 : Any decimal number between 0-255
 data1 : Any decimal number between 0-255  
 data2 : Any decimal number between 0-255
 
+
 **Divide  ‘/’ 	v0.02release**
 
 `/ data1 data2`
 
 data1 : Any decimal number between 0-255  
 data2 : Any decimal number between 0-255
+
 
 **AND  ‘&’	v0.03release**
 
@@ -100,6 +106,7 @@ data2 : Any decimal number between 0-255
 data1 : Any decimal number between 0-255  
 data2 : Any decimal number between 0-255  
 **Data can be p0,p1,p2,p3**
+
 
 **OR  ‘o’		v0.03release**
 
@@ -116,19 +123,23 @@ data2 : Any decimal number between 0-255
 data1 : Any decimal number between 0-255  
 **Data can be p0,p1,p2,p3**
 
+
 **Clear Screen “cls”		v0.01release**  
 `cls`  
 Clear the Serial Terminal
 
+
 **Runtime Reset “rst”		v0.01release**  
 `rst`  
 Reset System and Restart Micro Virtual-R
+
 
 ## **Credits**
 
 Designed and Built by Baibhav Bhattaharya   
 “@BaibhavPenguin” on GitHub  
 Copyright 2026 GPL v3.0 OpenSource License
+
 
 ## **Official Repository**
 
