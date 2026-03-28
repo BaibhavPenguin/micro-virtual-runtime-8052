@@ -1,0 +1,15 @@
+#Remove Debug Builds
+debug/
+
+#Remove Extra Compiler outputs
+    
+*.asm
+*.lk
+*.ihx
+*.lst
+*.map
+*.mem
+*.rel
+*.rst
+*.sym
+
