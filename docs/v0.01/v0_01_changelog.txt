@@ -1,0 +1,164 @@
+uVR - Micro Virtual Runtime 2026 v0.01 Changelog
+Completely Developed by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
+
+
+
+# Selected memory Map for System : 23-03-2026 : "uvr_variable.h"
+	[Internal RAM Division]
+		[30H - 7FH : Usable Internal Memory]
+
+			[30H - 3FH : Page 1 Variables]
+			[40H - 5FH : Program Buffer]
+			[60H - 7FH : Hardware Stack]
+
+			
+		
+# Decelared Page 1 Variables : 23-03-2026 : "uvr_variable.h"
+
+	loop_counter at 30H		#Storing System wide loop variables
+	
+	prog_counter at 31H     	#Storing the current position of the program buffer
+	
+	rd_pointer at 32H       	#Read Pointer to read from  the program buffer
+	
+	wr_pointer at 33H       	#Write Buffer to modify the program buffer
+	
+	system_tick at 34H		#To Store System Time (Master Tick)
+	
+	op1 at 35H			#Store one of the operands
+	
+	op2 at 36H 			#Store another operand
+	
+	active_timer at 37H		#Store timer data for generating delays (system_tick - active_timer)
+
+	instruction_buffer at 3DH 	#To Store Current Script Instruction
+	
+	result_l at 3EH			#To Store Lower Byte of Result
+	
+	result_h at 3FH			#To Store Higher Byte of Result
+
+#Decelared temp variables : 23-03-2026 : "uvr_variable.h"
+
+	temp0 at 38H
+	temp1 at 39H
+	temp2 at 3AH
+	temp3 at 3BH
+
+#Deceleared Program Buffer : 23-03-2026 : "uvr_variable.h"
+
+	prog_buffer from 40H 
+		[32 byte buffer from 40H to 5FH]
+
+
+
+
+#Defined Supported Command Set (Temporary) : 23-03-2026 : "uvr_rom.h"
+
+
+	'+'		#Add Numbers 		#Defined As "sADD"
+	
+	'-'		#Subtract Numbers 	#Defined as "sSUB"
+	
+	'*'		#Multiply Numbers	#Defined as "sMUL"
+
+	'/'		#Divide Numbers 	#Defined as "sDIV"
+
+	'O'		#Output A Byte 		#Defined as "sOUT"
+
+	'#'		#Loop Outputs 		#Defined as "sLPP"
+
+	'R'		#Software Reset		#Defined as "sRES"
+
+	'T'		#Set Timer Delay	#Defined as "sTICK"
+
+	'?'		#Execute Script 	#Defined as "sEXEC"
+
+	
+
+#Decelared ROM Constants : 23-03-2026 : "uvr_rom.h"
+
+	read_buffer = 40H		#Points to start of buffer 	!Redundant
+	write_buffer = 40H		#Points to start of buffer	!Redundant
+	
+	exec_ptr	= 40H		#Points to start of buffer 
+
+	hw_stack = 60H 			#Stores starting address of Hardware Stack
+
+	[timer_h timer_l] = 4BFEH 	#Two variables for 50ms Master Tick on AT89S52
+
+
+#Dcelared Hardware Initializers : 23-03-2026 : "driver52.h"
+
+	init_mpu() 		#Initialise Page 1 Variables and Registers
+	
+	init_timer()		#Initialise Hardware Timers for Master Tick
+	
+	init_serial()		#Initiaslize Serial Registers for I/O
+
+	get_char()		#Read Serial Input
+
+	put_char()		#Write Serial Output
+
+	start_timer()		#Start Timer 	!Unnecessary!Will be Changed Later
+
+	ascii_to_hex()		#Convert to HEX from Input
+
+	hex_to_ascii() 		#Convert to ASCII for output
+
+	print_boot_message() 	#Print Initialization Message on Serial Terminal
+
+
+
+#Major Changes : 25-03-2026
+	
+	uvr_rom.h ---> uvr_const.h 
+		
+		#Using "#define" for rom constants due to sdcc issues
+		#discarded "driver52.c" as sdcc does not support multiple sources for mcs51
+		#Adapted New Project Structure
+
+#Build System Changes 25-03-2026
+	
+	#Discarded Makefile.
+	#Using build.sh for building (d) Debug Build , (b) Built Binaries , (r) Release
+	#Completely Automated Build ---> Organize ---> Flash process
+	#Complete Redesign of functions.
+
+#Code Changes : 25-03-2025
+	
+	The Serial Communication failed catastrophically due to Timer 2 quirks and stack corruption.
+	#Redesign of Timer Roles.
+	
+	#timer 1 : Exclusively for baud generation at 9600
+	
+	#timer 2 : 16 Bit Autoreload , Generates master tick.
+	
+	#Added "serial_busy" at 0x38.
+	
+	#Replaced serial_busy with "is_recieved" flag
+	
+	#Added Local Version Control
+
+
+	
+#Version Control Format : 25-03-2025
+	
+	#vx.xx.ms.s.m
+		#Timed Versions _debug , _build , _release
+		#Added build.conf for source control
+
+
+#Added HAL v0.01 PART 1 , : ios.h : 27-03-2026
+	
+	#uart_send and SerialInput ISR now wrapped for logical data outputs
+	#Added echo function
+	#Added clear_terminal function
+	#Enter Key (CR) was dealt within the echo() function
+	#Moved high level function in HAL part header namely ios.h
+	#Groundwork done for 'c' command : clear screen 
+	#Considering support for 'r' command : restart
+	
+	#Removed declarations with "Redundant" flags
+	#buffer system now is simplified to "&prog_buffer[0]";
+	
+	
