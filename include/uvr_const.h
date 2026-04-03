@@ -4,24 +4,6 @@
 // Micro Virtual Runtime 2026 : Ported for AT89S52 : Unique ROM Literals
 
 //=================================== COMMAND LIST ==========================================
-#define cadd 0x46   //add
-#define csub 0x41   //sub
-#define cdiv 0x50   //div
-#define cmul 0x40  //mul
-#define ccls 0x5d   //cls
-#define cdel 0x4c   //del
-#define ctog 0x4a   //tog
-#define cand 0x43   //and
-#define cor 0x0e   //or
-#define cnot 0x54   //not
-#define cxor 0x59   //xor
-#define ccout 0x6f  //--o
-#define ccin  0x69  //--i
-#define cext 0x5a   //ext
-#define c_enter '\r' //On Pressing Enter Key
-#define col 0x63   //--c
-#define rst 0x72 //--r
-#define forever 0x66 //--f
 
 
 //================================== LITERALS ===============================================
@@ -59,6 +41,20 @@ __code static char invalid_msg[] = {
     'I','n','v','a','l','i','d',' ','C','M','D','\r','\n'
 };
 
+#define decimal_table 10
+__code static char ascii_codes[] = {
+    0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39
+};
+
+#define len_wait_msg 15
+__code static char wait_msg[15] = {
+    'P','r','o','c','e','s','s','i','n','g','.','.','.','\r','\n'
+};
+
+#define len_success_msg 4
+__code static char success_msg[] = {
+    'O' , 'K' , '\r' , '\n'
+};
 #endif //uvr_const_h
 
 

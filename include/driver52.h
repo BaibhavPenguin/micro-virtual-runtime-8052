@@ -7,7 +7,7 @@ void init_timer();
 void init_serial();
 void uart_send();
 void start_timer();
-void ascii_to_hex();
+unsigned char ascii_to_decimal(unsigned char);
 void hex_to_ascii();
 void start_interrupts();
 

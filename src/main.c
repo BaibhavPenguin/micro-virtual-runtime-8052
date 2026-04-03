@@ -3,6 +3,7 @@
 #include "uvr_const.h"
 #include "ios.h"
 #include "parser.h"
+#include "command.h"
 
 void init_sys(void){
 	EA = 1;
@@ -55,34 +56,62 @@ void echo(void){
 			uart_send('\n');uart_send('\r');
 		default:
 			uart_send(*rd_pointer);
+			
 	};
 	
 	
 
 }
 
+unsigned char ascii_to_decimal(unsigned char dat){
+	uart_send(dat);
+	if(dat > 0x29 && dat < 0x40){
+		dat = dat - 0x30;
+	}
+	else{
+		return 0;
+	}
+	return dat;
+	
+}
 
 void parse_cmd(void){
-	if(prog_buffer[prog_counter] == whitespc){
-		prog_counter++;
-	};
-	//while(prog_buffer[prog_counter] != whitespc){
-		temp1 = prog_buffer[prog_counter];
-		prog_counter++;
-		temp1 =  temp1 ^ (hsh_key & prog_buffer[prog_counter]);
-		prog_counter++;
-		temp1 = (temp1 >> 1) ^ prog_buffer[prog_counter];
-		instruction_buffer = temp1;
-		prog_counter++;
-		uart_send(instruction_buffer);
-	//}
+	command_parser:
+	switch(prog_buffer[prog_counter]){
+		case bck_spc:
+			prog_counter++;
+			goto command_parser;
+		case del_key:
+			prog_counter++;
+			goto command_parser;
+		case whitespc:
+			prog_counter++;
+			goto command_parser;
+		default:
+			while(prog_buffer[prog_counter] != whitespc){
+			if(prog_buffer[prog_counter] == bck_spc){
+				prog_counter++;
+			}
+			if(prog_buffer[prog_counter] == c_enter){
+				break;
+			}
+			temp1 = prog_buffer[prog_counter];
+			prog_counter++;
+			temp1 =  temp1 ^ (hsh_key & prog_buffer[prog_counter]);
+			prog_counter++;
+			temp1 = (temp1 >> 1) ^ prog_buffer[prog_counter];
+			instruction_buffer = temp1;
+			prog_counter++;
+			}
+	}
 	
 }
+
 
 
 void delay_ms_500(void){}
-void ascii_to_hex(void){}
 void hex_to_ascii(void){}
+
 
 void print_boot_message(void){
 	temp0 = 0;
@@ -102,6 +131,14 @@ void print_ready_message(void){
 	temp0 = 0;
 }
 
+void print_wait_message(void){
+	loop_counter = 0;
+	while(loop_counter != len_wait_msg){
+		uart_send(wait_msg[loop_counter]);
+		loop_counter++;
+	}
+}
+
 void clear_terminal(void){
 	//uart_send(0x1B);uart_send(0x5B);(0x48); //ANSI Home Cursor
 	//uart_send(0x1B);uart_send(0x5B);uart_send(0x32);uart_send(0x4A); //Clear Sequence ANSI
@@ -109,6 +146,35 @@ void clear_terminal(void){
 }
 
 
+void rst_handler(void){
+	EA = 0; //Disable All Interrupts Temporarily
+	WDTRST = 0x1E;  //Actication Byte 1
+	WDTRST = 0xE1;	//Activation Byte 2
+	while(1){
+		print_wait_message();
+	}
+
+}
+
+
+void bytecode_exec(void){
+
+	switch(instruction_buffer){
+		case crst:
+			rst_handler();
+			break;
+		case ccls:
+			clear_terminal();
+			break;
+		default:
+			uart_send('E');
+	};
+	return;
+	
+}
+
+
+//==================================================================================
 
 void Serial_ISR(void) __interrupt(4)
 {
@@ -144,16 +210,23 @@ void main(void){
 			case c_enter:
 				ES = 0;				//Disable Serial Interrupt;
 				parse_cmd();
+				bytecode_exec();
+				uart_send(instruction_buffer);
+				prog_counter++;		//Increment Virtual Program Counter 
 				ES = 1;
+				
 			default:
 			rd_pointer++;
 		}
-		if(wr_pointer > &prog_buffer[32]){
+		if(wr_pointer > &prog_buffer[31]){
 			wr_pointer = &prog_buffer[0];
 		};
-		if(rd_pointer > &prog_buffer[32]){
+		if(rd_pointer > &prog_buffer[31]){
 			rd_pointer = &prog_buffer[0];
 		};
+		if(prog_counter > 31){
+			prog_counter = 0;
+		}
 		is_recieved = 0;
 		
 

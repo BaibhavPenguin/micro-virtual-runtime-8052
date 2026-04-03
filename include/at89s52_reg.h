@@ -184,7 +184,7 @@ __sbit __at (0xCE) EXF2    ;
 __sbit __at (0xCF) TF2     ;
 
 /* Internal Watch Dog */
-__sbit __at (0xA6) WDTRST;
+__sfr __at (0xA6) WDTRST;
 
 
 

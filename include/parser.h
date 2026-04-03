@@ -9,6 +9,8 @@
 
 #define comma ','
 
+#define del_key 127
+
 void parse_cmd(void);
 
 #endif //parser_h
