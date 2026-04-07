@@ -35,5 +35,8 @@ volatile unsigned char __data __at (0x40) prog_buffer[32] = {0};
 //============================== FLAGS ===========================
 __bit __at(0x00) is_recieved;
 __bit __at(0x01) infinite_exec;
+__bit __at(0x02) is_error;
+__bit __at(0x03) echo_e;
+__bit __at(0x04) is_success;
 
 #endif //uvr_variable_h

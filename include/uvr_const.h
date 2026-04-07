@@ -18,9 +18,13 @@
 
 #define esc_char 0x1B
 
+#define terminal_reset_byte 0x63
+
+#define buffer_size 32
 
 
-//================================== LOOKUP TABLES  ==========================================
+
+//================================== STRING MESSAGES  ==========================================
 
 #define len_boot_message 54
 
@@ -36,9 +40,10 @@ __code static char ready_msg[7] = {
     'R','E','A','D','Y' , '\r' ,'\n'
 };
 
-#define len_invalid_cmd_msg 10;
-__code static char invalid_msg[] = {
-    'I','n','v','a','l','i','d',' ','C','M','D','\r','\n'
+#define len_invalid_cmd_msg 35
+
+__code static char invalid_msg[35] = {
+    'I','n','v','a','l','i','d',' ','o','r',' ','I','n','c','o','m','p','l','e','t','e',' ','C','o','m','m','a','n','d','\r','\n' , 0x1B , '[' , '0' ,'m'
 };
 
 #define decimal_table 10
@@ -51,10 +56,23 @@ __code static char wait_msg[15] = {
     'P','r','o','c','e','s','s','i','n','g','.','.','.','\r','\n'
 };
 
-#define len_success_msg 4
-__code static char success_msg[] = {
-    'O' , 'K' , '\r' , '\n'
+#define len_success_msg 5
+__code static char success_msg[5] = {
+    'O' , 'K','!', '\r' , '\n'
 };
+
+#define len_error_code 12
+__code static char error_msg[12] = {
+    0x1B , '[' , '3', '1' , 'm' , 'E' , 'R' , 'R' , 'O' , 'R' , '!' , ' ',
+};
+
+
+
+//================================= LOOKUP TABLES ==================================
+
+#define supported_ansi_color_operands 0x08 //Supported Colors 
+#define ascii_zero_char '0'
+#define ascii_three_char '3'
 #endif //uvr_const_h
 
 

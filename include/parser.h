@@ -9,7 +9,9 @@
 
 #define comma ','
 
-#define del_key 127
+#define backspace 0x7F
+
+
 
 void parse_cmd(void);
 

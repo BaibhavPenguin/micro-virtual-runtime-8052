@@ -17,3 +17,5 @@ debug/
 README.md
 hash.out
 opcodes.cpp
+oprands.cpp
+opr.out

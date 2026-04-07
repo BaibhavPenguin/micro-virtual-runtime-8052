@@ -2,14 +2,14 @@
 #define driver52_h
 
 
-void init_sys();
-void init_timer();
-void init_serial();
-void uart_send();
-void start_timer();
-unsigned char ascii_to_decimal(unsigned char);
-void hex_to_ascii();
-void start_interrupts();
+void init_sys(void);
+static inline void restore_sys(void);
+void init_timer(void);
+void init_serial(void);
+void uart_send(void);
+void start_timer(void);
+void hex_to_ascii(void);
+void start_interrupts(void);
 
 
 #endif //driver52_h

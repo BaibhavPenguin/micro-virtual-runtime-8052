@@ -197,4 +197,25 @@ Completely Developed by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
 
 #Groundwork laid for execution sequence and scheduler.
 
+#Fixed Buffer Overflow Issues in Both I/O and Execution : main.c : 03-04-2026
+
+#Fixed several bugs related to the scheduler and parser : main.c : 03-04-2026
+
+	#Scheduler bug for prevention of subsequent command execution after the initial command was fixed
+	#Buffer Overflow bug due to desync of Prog Counter and rd_pointer was fixed
+	#Fixed Buffer overflow due to infinesimal increase of program counter
+	#Fixed execition of previous comands ie buffer corruption issues
+
+#Added Support for --r : Runtime Reset Command : 03-04-2026
+	#Using WTDRST for runtime reset
+	#Added Print wait message function for UX convinience
+	#--r uses 0x1E and 0xE1 as an actication sequence for WTDRST at 0xA6
+	#changed definition of WDTRST from __sbit to __sfr __at
+	
+#Added support for cls : command.h : 03-04-2026
+	#Uses ios library function "clear_terminal()"
+	
+	
+##MAJOR CHANGE##  - Changed cls to clr : 03-04-2026
+	#clr causes collision with not hence it was cj=hanged to clr
 
