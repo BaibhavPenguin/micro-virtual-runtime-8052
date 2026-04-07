@@ -1,20 +1,20 @@
 <h1><strong>Supported Commands in Micro Virtual-R for At89S52</strong></h1>
 <br>
 
-**Clear Screen "cls"**
+**Clear Screen "cls"** <br>
 `cls`
 <br>
-**Reset Command Line "-cl"**
+**Reset Command Line "-cl"** <br> 
 `-cl`
 <br>
-**Runtime Software Reset "--r"**
+**Runtime Software Reset "--r"**  <br>
 `--r`
 <br>
-**Change Text Color "--c"**
+**Change Text Color "--c"**  <br>
 <br>
 `--c color_short_code`
-
-**Colors Supported Are**
+ 
+**Colors Supported Are**  <br>
 `00 = black`<br>
 `01 = red`<br>
 `02 = green`<br>

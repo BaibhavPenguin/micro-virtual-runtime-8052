@@ -1,12 +1,12 @@
 **PuTTY Terminal is Recomemded for use with Micro Virtual-R**
 
-`Serial Baud Rate : 9600
-Terminal Type : xterm-256
-Backspace Key : "Ctrl + ?" (Decimal = 127)
-Flow Control : None
-Parity : None
-Stop Bits : 1
-Data Bits : 8`
+`Serial Baud Rate : 9600` <br>
+`Terminal Type : xterm-256`<br>
+`Backspace Key : "Ctrl + ?" (Decimal = 127)`<br>
+`Flow Control : None`<br>
+`Parity : None`<br>
+`Stop Bits : 1`<br>
+`Data Bits : 8`<br>
 
 <hr>
 
