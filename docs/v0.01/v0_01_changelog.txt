@@ -1,5 +1,5 @@
-uVR - Micro Virtual Runtime 2026 v0.01 Changelog
-Completely Developed by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
+uVR - Micro Virtual-R 2026 v0.01 Changelog
+Development Log :  by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
 
 
 
@@ -171,7 +171,7 @@ Completely Developed by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
 	"mul" data1,data2
 	"div" data1,data2
 	"and" data,data2
-	"or " data1,data2
+	"or" data1,data2
 	"not" data
 	"xor" data1,data2
 	"--o"  data , port
@@ -219,3 +219,43 @@ Completely Developed by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
 ##MAJOR CHANGE##  - Changed cls to clr : 03-04-2026
 	#clr causes collision with not hence it was cj=hanged to clr
 
+
+#Fixed all backspace issues : main.c : 06-04-2026
+
+	#Expaneded Serial ISR for checking Control + ? (Decimal 127)
+	#Set Delete Characrer (Decimal 127) as System wide Backspace Key
+	#Added echo_e (Echo Erase Flag) for handling transfer of backspace sequence 
+	#Added core logic for handling Buffer Overflow and Underflow
+	#Backspace now just overwrites the last character as it should
+
+#Changed Underlying logic of "clr" and added "-cl" : main.c : ios.h 
+
+	#"clr" logic changed from Reset terminal to "ESC + [ + 2 + J + ESC + [ + H"
+	#Changed underlying logic of ios function clear_terminal()
+	#Added terminal_reset() ios function 
+	#Added command "-cl" for Commahd Line Reset
+
+	Command Line Reselt "-cl" doesn't preserve any color settings or terminal configurations
+	Clear Screen just uses the ASCII Clear Screen Sequence to Clear printed characters and move
+	cursor back to HOME (Control + H).
+
+	##Planning to add the tog command and publish release v0.01 before 12-04-2026##
+
+#Added --f command and its respective message : main.c : 10-04-2026
+#Moved the decimal operand parser in a new function called parse_numeric_operand_single() : main.c : 10-04-2026
+#Reuse and Expand the infirmation provided by is_error: main.c : 10-04-2026:
+#Added a 5 byte buffer for storing the results ie an output buffer: main.c : 10-04-2026
+#Added add command with support for continuous adding upto 65535 (base10) : main.c : 10-04-2026
+#Replaced "del" command with "buf" command to view the result of the previous arithmetic or logical command : main.c : 10-04-2026
+
+#Changed release v0.01 goals to include all the arithmetic commands.
+#v0.02 to include --i and --o
+#v0.03 to include all logical commands and the tog command
+#v0.04 to fix random bugs and quirks
+
+#Later versions will be a subset of v0.04 as expansion is vertical. Commands may be added later however the possibility seems low
+
+
+
+
+	
