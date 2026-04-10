@@ -13,5 +13,8 @@ void print_wait_message(void);
 void print_success_message(void);
 void print_invalid_cmd(void);
 void terminal_reset(void);
+void input_char_serial_polling(void);
+
+void print_result_buffers(void);
 
 #endif //ios_h

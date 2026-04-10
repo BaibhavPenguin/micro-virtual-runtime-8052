@@ -37,9 +37,9 @@ B**linking LED Program for At89S52 in C**
 
 **Live Blinking LED via Micro Virtual-R** 
 
-`# 255 , 0 , p1 , i`
+`tog 255 , 0 , p1 , i`
 
-`Format : # data1 , data2 , output , iterations` 
+`Format : tog data1 , data2 , output , iterations` 
 
 Micro Virtual-R reduces the amount of programming and eliminates the need of constant flashing and rewriting of the ROM. 
 

@@ -12,7 +12,8 @@
 #define backspace 0x7F
 
 
+unsigned char parse_numeric_operand_single(void);     //Uses temp1
+void parse_cmd(void);   // Uses temp0 , temp1
 
-void parse_cmd(void);
 
 #endif //parser_h

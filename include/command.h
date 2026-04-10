@@ -7,8 +7,8 @@
 #define csub 0x41   //sub
 #define cdiv 0x50   //div
 #define cmul 0x40  //mul
+#define cbuf 0x4d  //buf
 #define cclr 0x55   //clr
-#define cdel 0x4c   //del
 #define ctog 0x4a   //tog
 #define cand 0x43   //and
 #define cor 0x0e   //or
@@ -24,16 +24,19 @@
 #define no_op 00
 #define error_op 01
 #define ccl 0x6b    //-cl
-void bytecode_exec(void);
 
+void bytecode_exec(void);
 
 static inline void rst_handler(void);
 
-
 static inline void color_handler(void);
 
+static inline void input_handler(void);
 
+static inline void infinite_flag_handler(void);
+
+static inline void add_handler(void);
 // cls handling done by clear_terminal system routine.
-//static inline add_handler();
+
 
 #endif  //command_h

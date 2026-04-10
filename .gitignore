@@ -17,5 +17,6 @@ debug/
 README.md
 hash.out
 opcodes.cpp
-oprands.cpp
+operands.cpp
 opr.out
+temp.txt

@@ -128,6 +128,14 @@ void parse_cmd(void){
 void delay_ms_500(void){}
 void hex_to_ascii(void){}
 
+void input_char_serial_polling(void){
+	ES = 0;
+	while(!RI);
+	temp0 = SBUF;
+	RI = 0;
+	ES = 1;
+}
+
 void print_boot_message(void){
 	temp0 = 0;
 	while(temp0 != len_boot_message){
@@ -161,6 +169,37 @@ void print_success_message(void){
 		loop_counter++;
 	};
 }
+void print_result_buffers(void){
+	temp_integer = result;
+	loop_counter = 0;
+	if(temp_integer == 0){
+		uart_send('0');uart_send('0');uart_send('0');
+		uart_send('\r');uart_send('\n');
+		is_success = 1;
+		return;
+	};
+
+	while(temp_integer > 0){
+		result_char_buffer[loop_counter] = (temp_integer % 10) + 0x30;
+		temp_integer /= 10;
+		loop_counter++;
+	};
+
+	uart_send(result_char_buffer[4]);
+	uart_send(result_char_buffer[3]);
+	uart_send(result_char_buffer[2]);
+	uart_send(result_char_buffer[1]);
+	uart_send(result_char_buffer[0]);
+	uart_send('\r');uart_send('\n');
+	is_success = 1;
+	result_char_buffer[0] = 0;
+	result_char_buffer[1] = 0;
+	result_char_buffer[2] = 0;
+	result_char_buffer[3] = 0;
+	result_char_buffer[4] = 0;
+	return;
+	
+}
 
 void print_invalid_cmd(void){
 	loop_counter = 0;
@@ -174,6 +213,12 @@ void print_invalid_cmd(void){
 		uart_send(invalid_msg[loop_counter]);
 		loop_counter++;
 	}
+
+	loop_counter = 0;
+	while(loop_counter != len_info_msg){
+		uart_send(info_msg[loop_counter]);
+		loop_counter++;
+	};
 }
 
 void terminal_reset(void){
@@ -183,6 +228,30 @@ void terminal_reset(void){
 void clear_terminal(void){
 	uart_send(esc_char);uart_send('[');uart_send('2');uart_send('J');
 	uart_send(esc_char);uart_send('[');uart_send('H');
+}
+
+unsigned char parse_numeric_operand_single(void){
+	operand_parser:
+	switch(prog_buffer[prog_counter]){
+		case backspace:
+			prog_counter++;
+			goto operand_parser;
+		case whitespc:
+			prog_counter++;
+			goto operand_parser;
+		default:
+				temp1 = 0;
+				while(prog_buffer[prog_counter] != whitespc){
+					
+					if(prog_buffer[prog_counter] == c_enter){
+						break;
+					};
+					temp1 *= 10;
+					temp1 += prog_buffer[prog_counter] - 0x30;
+					prog_counter++;
+				};
+				return temp1;
+	}
 }
 
 static inline void rst_handler(void){
@@ -195,64 +264,58 @@ static inline void rst_handler(void){
 }
 
 static inline void color_handler(void){
-	operand_parser:
-	switch(prog_buffer[prog_counter]){
-		case backspace:
-			prog_counter++;
-			goto operand_parser;
-		case whitespc:
-			prog_counter++;
-			goto operand_parser;
-		default:
-				op1 = 0;
-				temp1 = 0;
-				while(prog_buffer[prog_counter] != whitespc){
-					
-					if(prog_buffer[prog_counter] == backspace){
-						prog_counter++;
-					};
+	op1 = 0;
+	op1 = parse_numeric_operand_single();
+	if(op1 >= supported_ansi_color_operands ){
+		is_error = 1;
+		return;
+	};
+	uart_send(esc_char); //Escape Character
+	uart_send('[');
+	uart_send(ascii_three_char);
+	uart_send(ascii_zero_char + op1);
+	uart_send('m');
+	is_success = 1;
 
-					if(prog_buffer[prog_counter] == c_enter){
-						break;
-					};
-					temp1 *= 10;
-					temp1 += prog_buffer[prog_counter] - 0x30;
-					prog_counter++;
-				};
-				op1 = temp1;
-				//	uart_send(op1 + 0x30); //Debug Statement
-				if(op1 >= supported_ansi_color_operands ){
-					is_error = 1;
-					break;
-				};
+}
 
-				/*
-				if(!op1){
-				uart_send(0x1B); //Escape Character
-				uart_send('[');
-				uart_send('0');
-				uart_send('m');
-				is_success = 1;
-				}
-				*/
-				
-				uart_send(esc_char); //Escape Character
-				uart_send('[');
-				uart_send(ascii_three_char);
-				uart_send(ascii_zero_char + op1);
-				uart_send('m');
-				is_success = 1;
-				
-
-
-
+static inline void infinite_flag_handler(void){
+	loop_counter = 0;
+	if(infinite_exec){
+		infinite_exec = 0;
+		while(loop_counter != len_infinite_disabled){
+			uart_send(infinite_disabled_msg[loop_counter]);
+			loop_counter++;
+		};
+	}
+	else{
+		infinite_exec = 1;
+		while(loop_counter != len_infinite_enabled){
+			uart_send(infinite_enabled_msg[loop_counter]);
+			loop_counter++;
+		};
 	}
 }
 
+static inline void add_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	if(op1 == 0 && op2 == 0){
+		result = 0;
+		goto print;
+	};
+	if(op1 != 0 && op2 == 0){
+		result = result + op1;
+		goto print;
+	};
+	result = op1 + op2;
+	
+	print:
+	print_result_buffers();
 
 
-
-
+}
+	
 
 void bytecode_exec(void){
 
@@ -270,6 +333,15 @@ void bytecode_exec(void){
 			break;
 		case ccl:
 			terminal_reset();
+			break;
+		case forever:
+			infinite_flag_handler();
+			break;
+		case cadd:
+			add_handler();
+			break;
+		case cbuf:
+			print_result_buffers();
 			break;
 		default:
 			is_error = 1;

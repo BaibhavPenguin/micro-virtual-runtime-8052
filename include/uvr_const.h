@@ -66,9 +66,15 @@ __code static char error_msg[12] = {
     0x1B , '[' , '3', '1' , 'm' , 'E' , 'R' , 'R' , 'O' , 'R' , '!' , ' ',
 };
 
+#define len_infinite_enabled 24
+__code static char infinite_enabled_msg[] = "Infinite Loops Enabled\r\n";
 
+#define len_infinite_disabled 25
+__code static char infinite_disabled_msg[] = "Infinite Loops Disabled\r\n";
 
-//================================= LOOKUP TABLES ==================================
+#define len_info_msg 70
+__code unsigned char info_msg[] = "Buffers were cleared. Machine state and previous results were saved!\r\n";
+//================================= System Definitions ==================================
 
 #define supported_ansi_color_operands 0x08 //Supported Colors 
 #define ascii_zero_char '0'
