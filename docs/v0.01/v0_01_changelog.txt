@@ -242,20 +242,38 @@ Development Log :  by Baibhav Bhattacharya | https://github.com/BaibhavPenguin
 	##Planning to add the tog command and publish release v0.01 before 12-04-2026##
 
 #Added --f command and its respective message : main.c : 10-04-2026
+
 #Moved the decimal operand parser in a new function called parse_numeric_operand_single() : main.c : 10-04-2026
+
 #Reuse and Expand the infirmation provided by is_error: main.c : 10-04-2026:
+
 #Added a 5 byte buffer for storing the results ie an output buffer: main.c : 10-04-2026
+
 #Added add command with support for continuous adding upto 65535 (base10) : main.c : 10-04-2026
+
 #Replaced "del" command with "buf" command to view the result of the previous arithmetic or logical command : main.c : 10-04-2026
 
 #Changed release v0.01 goals to include all the arithmetic commands.
-#v0.02 to include --i and --o
-#v0.03 to include all logical commands and the tog command
-#v0.04 to fix random bugs and quirks
+	#v0.02 to include --i and --o
+	#v0.03 to include all logical commands and the tog command
+	#v0.04 to fix random bugs and quirks
 
 #Later versions will be a subset of v0.04 as expansion is vertical. Commands may be added later however the possibility seems low
 
+#Added sub command : main.c : command.h ; 12-04-2026
 
+#Added div command : main.c : command.h ; 12-04-2026
 
+#Added mul command : main.c : command.h ; 12-04-2026
 
-	
+#Added mod command : main.c : command.h ; 12-04-2026
+
+#Added user data variable : main.c : uvr_variable.h : 12-04-2026
+	#Added user data variable "unsigned char temp4"
+	It is directly accessible by dto,dts,dtg,din,dmv,dmr
+	It can also be accessed via tog,sleep and future commands
+
+#Removed groundwork for "ext" command.
+	An ext command was planned as a sleep but it was removed because it is unnecsaary for
+	AT89S52 based Micro Virtual-R , it may be added in revisions for other platforms.
+

@@ -89,6 +89,7 @@ void echo(void){
 }
 
 void parse_cmd(void){
+	
 	command_parser:
 	switch(prog_buffer[prog_counter]){
 		case backspace:
@@ -100,33 +101,31 @@ void parse_cmd(void){
 		default:
 			temp0 = 0; 			//For storing command length
 			while(prog_buffer[prog_counter] != whitespc){
-			/*if(prog_buffer[prog_counter] == backspace){
-				prog_counter++;
-			}*/
 			if(prog_buffer[prog_counter] == c_enter){
 				break;
 			}
 			temp1 = prog_buffer[prog_counter];
 			prog_counter++;
+			prog_counter &= 0x1f;
 			
 			temp1 =  temp1 ^ (hsh_key & prog_buffer[prog_counter]);
 			prog_counter++;
+			prog_counter &= 0x1f;
 			
 			temp1 = (temp1 >> 1) ^ prog_buffer[prog_counter];
 			instruction_buffer = temp1;
 			temp0++;
 			prog_counter++;
+			prog_counter &= 0x1f;
 			}
 			
 			if(temp0 > 1){
 				instruction_buffer = error_op;
+
 			}
 	}
 	
 }
-
-void delay_ms_500(void){}
-void hex_to_ascii(void){}
 
 void input_char_serial_polling(void){
 	ES = 0;
@@ -134,6 +133,27 @@ void input_char_serial_polling(void){
 	temp0 = SBUF;
 	RI = 0;
 	ES = 1;
+}
+
+void print_invalid_cmd(void){
+	loop_counter = 0;
+	while(loop_counter != len_error_code){
+		uart_send(error_msg[loop_counter]);
+		loop_counter++;
+	};
+
+	loop_counter = 0;
+	while(loop_counter != len_invalid_cmd_msg){
+		uart_send(invalid_msg[loop_counter]);
+		loop_counter++;
+	}
+
+	loop_counter = 0;
+	while(loop_counter != len_info_msg){
+		uart_send(info_msg[loop_counter]);
+		loop_counter++;
+	};
+	return;
 }
 
 void print_boot_message(void){
@@ -169,6 +189,7 @@ void print_success_message(void){
 		loop_counter++;
 	};
 }
+
 void print_result_buffers(void){
 	temp_integer = result;
 	loop_counter = 0;
@@ -201,26 +222,6 @@ void print_result_buffers(void){
 	
 }
 
-void print_invalid_cmd(void){
-	loop_counter = 0;
-	while(loop_counter != len_error_code){
-		uart_send(error_msg[loop_counter]);
-		loop_counter++;
-	};
-
-	loop_counter = 0;
-	while(loop_counter != len_invalid_cmd_msg){
-		uart_send(invalid_msg[loop_counter]);
-		loop_counter++;
-	}
-
-	loop_counter = 0;
-	while(loop_counter != len_info_msg){
-		uart_send(info_msg[loop_counter]);
-		loop_counter++;
-	};
-}
-
 void terminal_reset(void){
 	uart_send(esc_char);uart_send(terminal_reset_byte); //Full Reset Terminal
 }
@@ -249,6 +250,7 @@ unsigned char parse_numeric_operand_single(void){
 					temp1 *= 10;
 					temp1 += prog_buffer[prog_counter] - 0x30;
 					prog_counter++;
+					prog_counter &= 0x1f;
 				};
 				return temp1;
 	}
@@ -315,10 +317,120 @@ static inline void add_handler(void){
 
 
 }
+
+static inline void sub_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	if(op1 == 0 && op2 == 0){
+		result = 0;
+		goto print;
+	};
+	if(op1 != 0 && op2 == 0){
+		result = result - op1;
+		goto print;
+	};
+	result = op1 - op2;
 	
+	print:
+	print_result_buffers();
+
+
+}
+
+static inline void div_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	if(op1 == 0 && op2 == 0){
+		is_error = 1;
+		return;
+	};
+	if(op1 != 0 && op2 == 0){
+		result = result / op1;
+		goto print;
+	}
+	result = op1 / op2;
+	
+	print:
+	print_result_buffers();
+
+
+}
+
+static inline void mul_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+
+	if(op1 != 0 && op2 == 0){
+		result = result * op1;
+		goto print;
+	}
+	result = op1 * op2;
+	
+	print:
+	print_result_buffers();
+
+
+}
+
+static inline void ld_handler(void){
+	ld_parser:
+	switch(prog_buffer[prog_counter]){
+		case backspace:
+			prog_counter++;
+			goto ld_parser;
+		case whitespc:
+			prog_counter++;
+			goto ld_parser;
+		default:
+				result = 0;
+				while(prog_buffer[prog_counter] != whitespc){
+					
+					if(prog_buffer[prog_counter] == c_enter){
+						break;
+					};
+					result *= 10;
+					result += prog_buffer[prog_counter] - 0x30;
+					prog_counter++;
+					prog_counter &= 0x1f;
+				};
+				is_success = 1;
+		}
+}
+
+static inline void dts_handler(void){
+	op1 = parse_numeric_operand_single();
+	temp4 = op1;
+	is_success = 1;
+}
+
+static inline void dtg_handler(void){
+	temp2 = result;
+	temp3 = (result >> 8);
+	result = temp4;
+	print_result_buffers();
+	result = (temp3 << 8) + temp2;
+}
+
+static inline void mod_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	if(op1 == 0 && op2 == 0){
+		is_error = 1;
+		return;
+	};
+	if(op1 != 0 && op2 == 0){
+		result = result % op1;
+		goto print;
+	}
+	result = op1 % op2;
+	
+	print:
+	print_result_buffers();
+
+
+}
 
 void bytecode_exec(void){
-
 	switch(instruction_buffer){
 		case no_op:
 			break;
@@ -340,8 +452,29 @@ void bytecode_exec(void){
 		case cadd:
 			add_handler();
 			break;
+		case csub:
+			sub_handler();
+			break;
+		case cdiv:
+			div_handler();
+			break;
+		case cmul:
+			mul_handler();
+			break;
 		case cbuf:
 			print_result_buffers();
+			break;
+		case cld:
+			ld_handler();
+			break;
+		case cdts:
+			dts_handler();
+			break;
+		case cdtg:
+			dtg_handler();
+			break;
+		case cmod:
+			mod_handler();
 			break;
 		default:
 			is_error = 1;
@@ -389,7 +522,6 @@ void Serial_ISR(void) __interrupt(4)
 	}
 }
 
-
 void Timer2_ISR(void) __interrupt(5)
 {
 	system_tick++;
@@ -426,7 +558,6 @@ void main(void){
 			instruction_buffer = 0;
 			ES = 1;
 		};
-
 
 		if(echo_e && rd_pointer > &prog_buffer[0]){
 			rd_pointer--;

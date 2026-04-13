@@ -8,7 +8,6 @@ void init_timer(void);
 void init_serial(void);
 void uart_send(void);
 void start_timer(void);
-void hex_to_ascii(void);
 void start_interrupts(void);
 
 

@@ -32,6 +32,7 @@ volatile unsigned int __data __at (0x3E) result = 0;
 volatile unsigned char __data __at (0x40) prog_buffer[32] = {0};
 volatile unsigned char __idata __at (0xF8) result_char_buffer[5] = {'0'};
 volatile unsigned int __idata __at(0xfd) temp_integer = 0;
+volatile unsigned char __idata __at(0xff) temp4 = 0;
 //============================== FLAGS ===========================
 __bit __at(0x00) is_recieved;
 __bit __at(0x01) infinite_exec;
