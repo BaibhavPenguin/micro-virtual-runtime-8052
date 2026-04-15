@@ -87,6 +87,51 @@ Get Remainder of division of a number to the previous result , by default the re
 `buf`  
 View the result of the previous arithmetic and logical command.   
 
+<h1><strong> Logical Operations in Micro Virtual - R</strong></h1><br>
+
+**AND Operation "and"** <br>
+`and data1 data2`  
+Perform bitwise AND Operation on two 8-Bit numbers  
+
+`and data1`  
+Peeform bitwise AND Operation on previous result and 8-bit number
+
+
+**OR Operation "orr"** <br>
+`orr data1 data2`  
+Perform bitwise OR Operation on two 8-Bit numbers  
+
+`orr data1`  
+Peeform bitwise OR Operation on previous result and 8-bit number
+
+
+**NOT Operation "not"** <br>
+`not data1`  
+Perform bitwise NOT operation on 16-Bit number  
+
+
+**XOR Operation "xor"** <br>
+`xor data1 data2`  
+Perform bitwise xOR Operation on two 8-Bit numbers  
+
+`xor data1`  
+Peeform bitwise xOR Operation on previous result and 8-bit number
+
+<h1><strong>Binary Shifting operations</strong></h1><br>
+
+**Binary Right Shift ">>>"**  
+`>>> number_of_bits data`  
+Shift an 8 bit data by "number_bits" towards the right  
+`>>> number_of_bits`  
+Shift the previous result by "number_of_bits" towards the right  
+
+
+**Binary Left Shift "<<<"**  
+`<<< number_of_bits data`  
+Shift an 8 bit data by "number_bits" towards the left    
+`<<< number_of_bits`  
+Shift the previous result by "number_of_bits" towards the left   
+
 <hr>
 
 <h1><strong>Saving user data in Micro Virtual-R</strong></h1><br>
@@ -94,7 +139,9 @@ Micro Virtual - R for AT89S52 gives access to a single 8 bit variable which can 
 `dts data` : Save 8-Bit data in variable `x`
 `dtg` : View data stored in variable `x`  
 `din` : Input data from Ports to variable `x`  
-`dto` : Output data from variable `x` to ports  
+`dto` : Output data from variable `x` to ports 
+`dmv` : Move lower byte of result in variable `x`  
+`dmr` : Restore lower byte of result from variable `x`    
 The `x` user data variable can also be accesed in `tog` commands through `x` operand.
 Other diret uses will be added in later revisions.
 

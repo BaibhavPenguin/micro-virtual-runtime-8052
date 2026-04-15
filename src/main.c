@@ -31,6 +31,7 @@ static inline void restore_sys(void){
 	op2 = 0;
 	loop_counter = 0;
 	infinite_exec = 0;
+	is_recieved = 0;
 	wr_pointer = &prog_buffer[0];
 	rd_pointer = &prog_buffer[0];
 	prog_counter = 0;
@@ -94,9 +95,11 @@ void parse_cmd(void){
 	switch(prog_buffer[prog_counter]){
 		case backspace:
 			prog_counter++;
+			prog_counter &= 0x1f;
 			goto command_parser;
 		case whitespc:
 			prog_counter++;
+			prog_counter &= 0x1f;
 			goto command_parser;
 		default:
 			temp0 = 0; 			//For storing command length
@@ -194,7 +197,7 @@ void print_result_buffers(void){
 	temp_integer = result;
 	loop_counter = 0;
 	if(temp_integer == 0){
-		uart_send('0');uart_send('0');uart_send('0');
+		uart_send('0');
 		uart_send('\r');uart_send('\n');
 		is_success = 1;
 		return;
@@ -236,9 +239,11 @@ unsigned char parse_numeric_operand_single(void){
 	switch(prog_buffer[prog_counter]){
 		case backspace:
 			prog_counter++;
+			prog_counter &= 0x1f;
 			goto operand_parser;
 		case whitespc:
 			prog_counter++;
+			prog_counter &= 0x1f;
 			goto operand_parser;
 		default:
 				temp1 = 0;
@@ -372,14 +377,16 @@ static inline void mul_handler(void){
 
 }
 
-static inline void ld_handler(void){
+static void ld_handler(void){
 	ld_parser:
 	switch(prog_buffer[prog_counter]){
 		case backspace:
 			prog_counter++;
+			prog_counter &= 0x1f;
 			goto ld_parser;
 		case whitespc:
 			prog_counter++;
+			prog_counter &= 0x1f;
 			goto ld_parser;
 		default:
 				result = 0;
@@ -411,6 +418,40 @@ static inline void dtg_handler(void){
 	result = (temp3 << 8) + temp2;
 }
 
+static inline void not_handler(void){
+	ld_handler();
+	result = ~result;
+	print_result_buffers();
+}
+
+static inline void shift_r_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	
+	if(!op2){
+		result = result >> op1;
+		goto print;
+	};
+	
+	result = op2 >> op1;
+	print:
+	print_result_buffers();
+}
+
+static inline void shift_l_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	
+	if(!op2){
+		result = result << op1;
+		goto print;
+	};
+	
+	result = op2 << op1;
+	print:
+	print_result_buffers();
+}
+
 static inline void mod_handler(void){
 	op1 = parse_numeric_operand_single();
 	op2 = parse_numeric_operand_single();
@@ -429,6 +470,63 @@ static inline void mod_handler(void){
 
 
 }
+
+static inline void and_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+
+	if(op1 != 0 && op2 == 0){
+		result = result & op1;
+		goto print;
+	}
+	result = op1 & op2;
+	
+	print:
+	print_result_buffers();
+
+
+}
+
+static inline void orr_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	if(op1 != 0 && op2 == 0){
+		result = result | op1;
+		goto print;
+	}
+	result = op1 | op2;
+	
+	print:
+	print_result_buffers();
+
+
+}
+
+static inline void xor_handler(void){
+	op1 = parse_numeric_operand_single();
+	op2 = parse_numeric_operand_single();
+	if(op1 != 0 && op2 == 0){
+		result = result ^ op1;
+		goto print;
+	}
+	result = op1 ^ op2;
+	
+	print:
+	print_result_buffers();
+
+
+}
+
+static inline void dmv_handler(void){
+	temp4 = result;
+	is_success = 1;
+}
+
+static inline void dmr_handler(void){
+	result = temp4;
+	is_success = 1;
+}
+
 
 void bytecode_exec(void){
 	switch(instruction_buffer){
@@ -475,6 +573,30 @@ void bytecode_exec(void){
 			break;
 		case cmod:
 			mod_handler();
+			break;
+		case cand:
+			and_handler();
+			break;
+		case corr:
+			orr_handler();
+			break;
+		case cxor:
+			xor_handler();
+			break;
+		case cnot:
+			not_handler();
+			break;
+		case cshiftr:
+			shift_r_handler();
+			break;
+		case cshiftl:
+			shift_l_handler();
+			break;
+		case cdmv:
+			dmv_handler();
+			break;
+		case cdmr:
+			dmr_handler();
 			break;
 		default:
 			is_error = 1;

@@ -40,4 +40,5 @@ __bit __at(0x02) is_error;
 __bit __at(0x03) echo_e;
 __bit __at(0x04) is_success;
 
+
 #endif //uvr_variable_h

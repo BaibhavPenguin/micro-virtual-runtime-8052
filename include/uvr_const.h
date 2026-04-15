@@ -37,7 +37,7 @@ __code static char boot_message[54] = {
 
 #define len_ready_message 7
 __code static char ready_msg[7] = {
-    'R','E','A','D','Y' , '\r' ,'\n'
+    'R','e','a','d','y' , '\r' ,'\n'
 };
 
 #define len_invalid_cmd_msg 35
@@ -56,9 +56,9 @@ __code static char wait_msg[15] = {
     'P','r','o','c','e','s','s','i','n','g','.','.','.','\r','\n'
 };
 
-#define len_success_msg 5
-__code static char success_msg[5] = {
-    'O' , 'K','!', '\r' , '\n'
+#define len_success_msg 6
+__code static char success_msg[6] = {
+    'D' , 'o','n','e', '\r' , '\n'
 };
 
 #define len_error_code 12

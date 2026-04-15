@@ -10,10 +10,12 @@
 #define cbuf 0x4d  //buf --done
 #define cclr 0x55   //clr --done
 #define ctog 0x4a   //tog
-#define cand 0x43   //and
-#define cor 0x0e   //or
-#define cnot 0x54   //not
-#define cxor 0x59   //xor
+#define cand 0x43   //and       --done
+#define corr 0x5c   //orr      --done
+#define cnot 0x54   //not       --done
+#define cxor 0x59   //xor       --done
+#define cshiftr 0x3e // >>>     --done
+#define cshiftl 0x3c //<<<      --done
 
 #define cdto 0x47  //dto
 #define cdin 0x48 //din
@@ -24,13 +26,13 @@
 #define no_op 00        //--done
 #define error_op 01     //--done
 #define ccl 0x6b    //-cl --done
-#define cdts 0x5b   //dts
-#define cdtg 0x4f   //dtg
+#define cdts 0x5b   //dts   --done
+#define cdtg 0x4f   //dtg   --done
 #define cld 0x4b //rld --done
 #define csleep 0x5f //slp
-#define cmod 0x45 //mod
-#define cdmv 0x52 //dmv
-#define cdmr 0x56 //dmr
+#define cmod 0x45 //mod --done
+#define cdmv 0x52 //dmv     --done
+#define cdmr 0x56 //dmr     --done
 
 void bytecode_exec(void);
 
@@ -50,7 +52,7 @@ static inline void div_handler(void);
 
 static inline void mul_handler(void);
 
-static inline void ld_handler(void);
+static void ld_handler(void);   //Don't Cast as Inline as It is used multiple times.
 
 static inline void dts_handler(void);
 
@@ -58,7 +60,21 @@ static inline void dtg_handler(void);
 
 static inline void mod_handler(void);
 
+static inline void and_handler(void);
 
+static inline void orr_handler(void);
+
+static inline void xor_handler(void);
+
+static inline void not_handler(void);
+
+static inline void shift_r_handler(void);
+
+static inline void shift_l_handler(void);
+
+static inline void dmv_handler(void);
+
+static inline void dmr_handler(void);
 
 // cls handling done by clear_terminal system routine.
 

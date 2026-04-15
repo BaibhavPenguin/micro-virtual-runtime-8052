@@ -13,10 +13,12 @@ debug/
 *.rst
 *.sym
 
-#Remove the legacy README
 README.md
 hash.out
 opcodes.cpp
 operands.cpp
 opr.out
 temp.txt
+
+#Remove the legacy README
+
