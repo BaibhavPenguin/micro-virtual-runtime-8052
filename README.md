@@ -43,6 +43,7 @@ Micro Virtual - R significantly reduces the programming needed and eliminates th
 <br>
 ![Software Architecture Chart](assets/2.png)
 <br>
+## **Demof Micro virtual Runtime** <br>
 Micro virtual - R features a comprehensive CLI as a primary communication medium. It also supports font colors via `--c` command 
 varivous arithmetic , logical and automation commands can be run via the serial terminal 
 ![Micro Virtual R Demo](assets/cli_demo_image.png)
@@ -57,7 +58,7 @@ varivous arithmetic , logical and automation commands can be run via the serial 
 *and many more!* check **tree/main/docs/Commands.md** for detailed information on supported commands and their usage!<br>
 ## **Credits**
 Micro Virtual - R is completely designed and built by **Baibhav Bhattacharya** and is free and open source for anyone to use and modify!<br>
-**LinkedIn : ** https://www.linkedin.com/in/baibhav-bhattacharya-214533402/ <br>
+**LinkedIn** https://www.linkedin.com/in/baibhav-bhattacharya-214533402/ <br>
 **BaibhavPenguin** on GitHub <br>
 ## **Official Repository** <br>
 https://github.com/BaibhavPenguin/micro-virtual-runtime-8052
