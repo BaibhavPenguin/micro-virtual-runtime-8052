@@ -43,7 +43,7 @@ Micro Virtual - R significantly reduces the programming needed and eliminates th
 <br>
 ![Software Architecture Chart](assets/2.png)
 <br>
-## **Micro virtual Runtime Interface** <br>
+## **Micro Virtual Runtime Interface** <br>
 Micro virtual - R features a comprehensive CLI as a primary communication medium. It also supports font colors via `--c` command 
 varivous arithmetic , logical and automation commands can be run via the serial terminal 
 ![Micro Virtual R Demo](assets/cli_demo_image.png)
