@@ -2,7 +2,7 @@
 **Micro Virtual - R Copyright 2026 Baibhav Bhattacharya** 
 ![Main Logo](assets/boot.png)
 **Micro Virtual - R** is a minimal runtime enviornment for Micro Controllers. This specific rendition of Micro Virtual - R is designed in compatibility with 8052 Class Microcontrollers MMCS51 specifically AT89S52.
-The entire runtime can fully function within the 256 byte internal ram of the AT89S52. It supprots full Serial Communication. Command based audit. Fast paced industrial prototyping and a hands free programming approach.<br>
+The entire runtime can fully function within the 256 byte internal ram of the AT89S52. It supports full Serial Communication. Command based audit. Fast paced industrial prototyping and a hands free programming approach.<br>
 
 ## **The Vision of Micro Virtual - R**<br>
 **A small program for blinking led's in C**<br>
