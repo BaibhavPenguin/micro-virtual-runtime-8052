@@ -1,156 +1,264 @@
 <h1><strong>Supported Commands in Micro Virtual-R for At89S52</strong></h1>
 <br>
 
-**Clear Screen "cls"** <br>
-`cls`
+## **Commands for performing Arithmetic Operations**
+<table align="center" border="1">
+<tr>
+<th align="center">Sr</th>
+<th align="center">Command</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Usage</th>
+</tr>
+
+<tr>
+<td>1
+<td align="center">add
+<td align="center">Arithmetic
+<td align="center"> Add any two numbers and get a result upto 65535
+<td> <a href="utilities/add.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>2
+<td align="center">sub
+<td align="center">Arithmetic
+<td align="center"> Subtract any two unsigned numbers.
+<td> <a href="utilities/sub.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>3
+<td align="center">mul
+<td align="center">Arithmetic
+<td align="center"> Multiply 8-bit numbers for a result upto 65535
+<td> <a href="utilities/mul.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>4
+<td align="center">div
+<td align="center">Arithmetic
+<td align="center"> Divide 8-bit numbers and get Quotient
+<td> <a href="utilities/div.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>5
+<td align="center">mod
+<td align="center">Arithmetic
+<td align="center"> Divide 8-bit numbers and get Remainder
+<td> <a href="utilities/mod.md"> View Usage Details</a> </td>
+</tr>
+
+</table>
+
+
 <br>
-**Reset Command Line "-cl"** <br> 
-`-cl`
 <br>
-**Runtime Software Reset "--r"**  <br>
-`--r`
+
+## **Commands for performing Logical Operations**
+<table align="center" border="1">
+<tr>
+<th align="center">Sr</th>
+<th align="center">Command</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Usage</th>
+</tr>
+
+<tr>
+<td>1
+<td align="center">and
+<td align="center">Bitwise
+<td align="center"> Perform bitwise Logical <b>AND</b> operation 
+<td> <a href="utilities/and.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>2
+<td align="center">orr
+<td align="center">Bitwise
+<td align="center"> Perform bitwise Logical <b>OR</b> operation 
+<td> <a href="utilities/orr.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>3
+<td align="center">not
+<td align="center">Bitwise
+<td align="center">Perform bitwise Logical <b>NOT</b> operation 
+<td> <a href="utilities/not.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>4
+<td align="center">xor
+<td align="center">Bitwise
+<td align="center"> Perform bitwise Logical <b>XOR</b> operation
+<td> <a href="utilities/xor.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>5
+<td align="center">>>>
+<td align="center">Bitwise
+<td align="center"> Perform bitwise <b>Right Shift</b> 
+<td> <a href="utilities/rsh.md"> View Usage Details</a> </td>
+</tr>
+
+<tr>
+<td>6
+<td align="center"><<<
+<td align="center">Bitwise
+<td align="center"> Perform bitwise <b>Left Shift</b> 
+<td> <a href="utilities/lsh.md"> View Usage Details</a> </td>
+</tr>
+
+</table>
+
+
 <br>
-**Change Text Color "--c"**  <br>
 <br>
-`--c color_short_code`
- 
-**Colors Supported Are**  <br>
-`00 = black`<br>
-`01 = red`<br>
-`02 = green`<br>
-`03 = yellow`<br>
-`04 = blue`<br>
-`05 = magenta`<br>
-`06 = cyan`<br>
-`07 = white`
 
-**Default Color is set to white**
+## **System Management and Accessibility Commands**
+<table align="center" border="1">
+<tr>
+<th align="center">Sr</th>
+<th align="center">Command</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Usage</th>
+</tr>
 
-<h1><strong>Arithmetic Operations Using Micro Virtual-R Commands</strong></h1> <br>
+<tr>
+<td>1
+<td align="center">clr
+<td align="center">System
+<td align="center"> Clear the serial terminal
+<td> <a href="utilities/term.md"> View Usage Details</a> </td>
+</tr>
 
-**Adddition "add"** <br>
-Micro Virtual-R supports addition of 8 bit unsigned numbers (0-255) and upto 65535 using command shorthands<br>
+<tr>
+<td>2
+<td align="center">-cl
+<td align="center">System
+<td align="center">Reset Serial terminal 
+<td> <a href="utilities/term.md"> View Usage Details</a> </td>
+</tr>
 
-`add num1 num2` <br>
-Add two numbers from 0-255 for a maximum result of upto 510  
+<tr>
+<td>3
+<td align="center">--r
+<td align="center">System
+<td align="center">Runtime Hard Reset
+<td> <a href="utilities/term.md"> View Usage Details</a> </td>
+</tr>
 
-`add num1`  
-Add a number to the previous result of addition, by default the result buffer starts from 0  
+<tr>
+<td>4
+<td align="center">--c
+<td align="center">System
+<td align="center">Change Terminal Font Color
+<td> <a href="utilities/col.md"> View Usage Details</a> </td>
+</tr>
 
-`add`  
-Clear the result buffer , Resets the result to 00.  
+<tr>
+<td>5
+<td align="center">--f
+<td align="center">Runtime Critical
+<td align="center">Toggle System <b>Fail Safe.</b>
+<td> <a href="utilities/forc.md"> View Usage Details</a> </td>
+</tr>
 
-**Subtraction "sub"**  
+<tr>
+<td>6
+<td align="center">--i
+<td align="center">Runtime Critical
+<td align="center">Toggle <b>Infinite Execution</b>
+<td> <a href="utilities/inf.md"> View Usage Details</a> </td>
+</tr>
 
-Micro Virtual-R supports addition of 8 bit unsigned numbers (0-255) and upto 65535 using command shorthands<br>
+<tr>
+<td>7
+<td align="center">buf
+<td align="center">Data Management
+<td align="center">View current data of Result Buffer in decimal
+<td> <a href="utilities/buf.md"> View Usage Details</a> </td>
+</tr>
 
-`sub num1 num2` <br>
-Subtract two numbers from 0-255 for a maximum result of upto 510  
+<tr>
+<td>8
+<td align="center">rld
+<td align="center">Data Management
+<td align="center">Load 16-Bit Data in Result buffer.
+<td> <a href="utilities/rld.md"> View Usage Details</a> </td>
+</tr>
+</table>
 
-`sub num1`  
-Subtract a number from the previous result, by default the result buffer starts from 0  
+<br>
+<br>
 
-`sub`  
-Clear the result buffer , Resets the result to 00.  
+## **Direct Hardware Access in Micro Virtual - R**
+<table align="center" border="1">
+<tr>
+<th align="center">Sr</th>
+<th align="center">Command</th>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Usage</th>
+</tr>
 
-**Multiplication "mul"**  
+<tr>
+<td>1
+<td align="center">dts
+<td align="center">Direct Access
+<td align="center"> Send 8-Bit Data to hardware ports or user variable
+<td> <a href="utilities/dts.md"> View Usage Details</a> </td>
+</tr>
 
-Micro Virtual-R supports Multiplication of 8 bit unsigned numbers (0-255) and upto 65535 using command shorthands<br>
+<tr>
+<td>2
+<td align="center">dtg
+<td align="center">Direct Access
+<td align="center"> Subtract any two unsigned numbers.
+<td> <a href="utilities/dtg.md"> View Usage Details</a> </td>
+</tr>
 
-`mul num1 num2`  
-Multiply two numbers from 0-255 for a maximum result of upto 65535  
+<tr>
+<td> 3
+<td align="center"> tog
+<td align="center"> Direct Access
+<td align="center"> Not Yet Updated
+<td align="center"> Not Yet Updated
+</tr>
 
-`mul num1`  
-Muliply a number to the previous result ,by default the result buffer starts from 0.   
+<tr>
+<td> 4
+<td align="center"> slp
+<td align="center"> Direct Access
+<td align="center"> Not Yet Updated
+<td align="center"> Not Yet Updated
+</tr>
 
+<tr>
+<td> 5
+<td align="center"> bit
+<td align="center"> Direct Access
+<td align="center"> Not Yet Updated
+<td align="center"> Not Yet Updated
+</tr>
 
-**Division "div"**  
+<tr>
+<td> *
+<td align="center"> N/A
+<td align="center"> N/A
+<td align="center"> N/A
+<td align="center"> N/A
+</tr>
+</table>
 
-Micro Virtual-R supports Division of 8 bit unsigned numbers upto 65535 using command shorthands<br>
+<br>
 
-`div num1 num2`  
-Divide num1 by num2, num2 cannot be 0. 
-
-`div num1`  
-Divide a number to the previous result , by default the result buffer starts from 0  
-
-**Modulus "mod" **  
-Modulus `mod` gives the remainder of a division.  
-
-`div num1 num2`  
-Get Remainder of division of num1 by num2, num2 cannot be 0, 
-
-`div num1`  
-Get Remainder of division of a number to the previous result , by default the result buffer starts from 0  
-
-
-`buf`  
-View the result of the previous arithmetic and logical command.   
-
-<h1><strong> Logical Operations in Micro Virtual - R</strong></h1><br>
-
-**AND Operation "and"** <br>
-`and data1 data2`  
-Perform bitwise AND Operation on two 8-Bit numbers  
-
-`and data1`  
-Peeform bitwise AND Operation on previous result and 8-bit number
-
-
-**OR Operation "orr"** <br>
-`orr data1 data2`  
-Perform bitwise OR Operation on two 8-Bit numbers  
-
-`orr data1`  
-Peeform bitwise OR Operation on previous result and 8-bit number
-
-
-**NOT Operation "not"** <br>
-`not data1`  
-Perform bitwise NOT operation on 16-Bit number  
-
-
-**XOR Operation "xor"** <br>
-`xor data1 data2`  
-Perform bitwise xOR Operation on two 8-Bit numbers  
-
-`xor data1`  
-Peeform bitwise xOR Operation on previous result and 8-bit number
-
-<h1><strong>Binary Shifting operations</strong></h1><br>
-
-**Binary Right Shift ">>>"**  
-`>>> number_of_bits data`  
-Shift an 8 bit data by "number_bits" towards the right  
-`>>> number_of_bits`  
-Shift the previous result by "number_of_bits" towards the right  
-
-
-**Binary Left Shift "<<<"**  
-`<<< number_of_bits data`  
-Shift an 8 bit data by "number_bits" towards the left    
-`<<< number_of_bits`  
-Shift the previous result by "number_of_bits" towards the left   
-
-<hr>
-
-<h1><strong>Saving user data in Micro Virtual-R</strong></h1><br>
-Micro Virtual - R for AT89S52 gives access to a single 8 bit variable which can be directly accesed   via
-`dts data` : Save 8-Bit data in variable `x`
-`dtg` : View data stored in variable `x`  
-`din` : Input data from Ports to variable `x`  
-`dto` : Output data from variable `x` to ports 
-`dmv` : Move lower byte of result in variable `x`  
-`dmr` : Restore lower byte of result from variable `x`    
-The `x` user data variable can also be accesed in `tog` commands through `x` operand.
-Other diret uses will be added in later revisions.
-
-<hr>
-
-**The Infinite Execution Flag '--f'**<br>
-Infinitely executing commands will be added in future revisions and releases so as of now the `--f` command does nothing other than print a message and toggle an unused flag  
-It is an essential component for future commands.  
-
-<hr>
-
-Other commands and changes to existing commands will bed added here.
+## **View Previous Page**
+<a href="../README.md">Return to project overview - <u>README</u></a>

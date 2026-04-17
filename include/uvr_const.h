@@ -74,6 +74,22 @@ __code static char infinite_disabled_msg[] = "Infinite Loops Disabled\r\n";
 
 #define len_info_msg 70
 __code unsigned char info_msg[] = "Buffers were cleared. Machine state and previous results were saved!\r\n";
+
+
+#define len_failsafe_enabled 19
+__code static char failsafe_enabled_msg[] = "Fail Safe Enabled\r\n";
+
+#define len_failsafe_disabled 20
+__code static char failsafe_disabled_msg[] = "Fail Safe Disabled\r\n";
+
+#define len_failsafe_notice 25
+__code static char failsafe_notice[] = "Err. Fail Safe Enabled\r\n";
+
+#define len_failsafe_notice2 41
+__code static char failsafe_warning[] = "Warning! This may cause system failure.\r\n";
+
+
+
 //================================= System Definitions ==================================
 
 #define supported_ansi_color_operands 0x08 //Supported Colors 

@@ -39,6 +39,7 @@ __bit __at(0x01) infinite_exec;
 __bit __at(0x02) is_error;
 __bit __at(0x03) echo_e;
 __bit __at(0x04) is_success;
-
+__bit __at(0x05) machine_state;
+__bit __at(0x06) fail_safe_enabled;
 
 #endif //uvr_variable_h

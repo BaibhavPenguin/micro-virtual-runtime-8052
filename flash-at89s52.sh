@@ -1,5 +1,5 @@
 #!/bin/sh
-CONF=/etc/avrdude.conf
+CONF=config/at89s52.conf
 PART=AT89S52
 PROG=usbasp
 BLCK=10

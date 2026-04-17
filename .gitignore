@@ -13,7 +13,7 @@ debug/
 *.rst
 *.sym
 
-README.md
+
 hash.out
 opcodes.cpp
 operands.cpp
