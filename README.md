@@ -1,7 +1,7 @@
-# **Micro Virtual Runtime (uVR AT89S52)** <br>
+# **Micro Virtual Runtime (&micro;VR AT89S52)** <br>
 **Micro Virtual - R Copyright 2026 Baibhav Bhattacharya** 
 ![Main Logo](assets/boot.png)
-**Micro Virtual - R** is a minimal runtime enviornment for Micro Controllers. This specific rendition of Micro Virtual - R is designed in compatibility with 8052 Class Microcontrollers MMCS51 specifically AT89S52.
+**Micro Virtual - R** is a minimal runtime enviornment for Micro Controllers. This specific rendition of Micro Virtual - R is designed in compatibility with 8052 Class Microcontrollers MCS51 specifically AT89S52.
 The entire runtime can fully function within the 256 byte internal ram of the AT89S52. It supports full Serial Communication. Command based audit. Fast paced industrial prototyping and a hands free programming approach.<br>
 
 ## **The Vision of Micro Virtual - R**<br>
@@ -58,7 +58,7 @@ varivous arithmetic , logical and automation commands can be run via the serial 
 `buf` : View previous Result<br>
 `rld` : Load Virtual Accumulator (16-Bit)<br>
 
-## **View Command List of Micro Virtual-R **
+## **View Command List of Micro Virtual-R**
 
 <a href="docs/Commands.md">View Command List - <u>Commands.md</u> </a>
 

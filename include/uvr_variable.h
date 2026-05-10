@@ -9,7 +9,7 @@
 //=============================== PAGE ONE VARIABLES ============================================
 volatile unsigned char __data __at (0x30) loop_counter = 0; //Store Loop Counters
 
-volatile unsigned char __data __at (0x31)  prog_counter; //Store Program Counters
+volatile unsigned char __data __at (0x31)  ip_buffer_agent; //Input Buffer Agent
 volatile unsigned char __data __at (0x32)  *rd_pointer;
 volatile unsigned char __data __at (0x33)  *wr_pointer;
 
@@ -23,16 +23,27 @@ volatile unsigned char __data __at (0x39) temp1 = 0;
 volatile unsigned char __data __at (0x3A) temp2 = 0; //Temporary Variables
 volatile unsigned char __data __at (0x3C) temp3 = 0;
 
-volatile unsigned char __data __at (0x3D) instruction_buffer =0;
+volatile unsigned char __data __at (0x3D) instruction_buffer = 0;
 volatile unsigned int __data __at (0x3E) result = 0;
 
 
 //=============================== MULTIPLEXED BUFFER ===========================================
 
-volatile unsigned char __data __at (0x40) prog_buffer[32] = {0};
-volatile unsigned char __idata __at (0xF8) result_char_buffer[5] = {'0'};
-volatile unsigned int __idata __at(0xfd) temp_integer = 0;
-volatile unsigned char __idata __at(0xff) temp4 = 0;
+volatile unsigned char __data __at (0x40) input_buffer[32] = {0};
+volatile unsigned char __data __at (0x60) virtual_data_stack[10][2] = {{0}};
+volatile unsigned char __data __at (0x75) result_char_buffer[5] = {'0'};
+volatile unsigned int __data __at(0x7A) temp_integer = 0;
+volatile unsigned char __data __at(0x7C) virtual_program_counter = 0;
+volatile unsigned char __data __at(0x7E) condt_name = 0;
+
+
+volatile unsigned char __idata __at(0x80) virtual_call_stack[4][2] = {{0}};
+volatile unsigned char __idata __at(0x88) program_buffer[80] = {0};
+
+
+
+
+
 //============================== FLAGS ===========================
 __bit __at(0x00) is_recieved;
 __bit __at(0x01) infinite_exec;
@@ -41,5 +52,10 @@ __bit __at(0x03) echo_e;
 __bit __at(0x04) is_success;
 __bit __at(0x05) machine_state;
 __bit __at(0x06) fail_safe_enabled;
-
+__bit __at(0x07) backspace_block;
+__bit __at(0x08) state_programming_enabled;
+__bit __at(0x09) is_requesting_syscall_access;
+__bit __at(0x10) state_executing_script;
+__bit __at(0x11) is_input_buffer_reset;
+__bit __at(0x12) is_programmed;
 #endif //uvr_variable_h

@@ -12,22 +12,19 @@
 #define backspace 0x7F
 
 
-unsigned char parse_numeric_operand_single(void);     //Uses temp1
-void parse_cmd(void);   // Uses temp0 , temp1
+unsigned char unified_numeric_parser(void);     //Uses temp1
 
 
 
-#define port0 136
-#define port1 137
-#define port2 138
-#define port3 139
-#define var 132
-#define term 37
 
+static void arithmetic_parser(void);
 
-#define binary_flag 20
-#define decimal_flag 22
-#define raw_flag 36
+static inline void print_parser(void);
+
+static inline void sleep_parser(void);
+
+static inline void exit_parser(void);
+static inline void end_parser(void);
 
 
 

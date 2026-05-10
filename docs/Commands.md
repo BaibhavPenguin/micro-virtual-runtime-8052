@@ -1,7 +1,7 @@
 <h1><strong>Supported Commands in Micro Virtual-R for At89S52</strong></h1>
 <br>
 
-## **Commands for performing Arithmetic Operations**
+## **Arithmetic Operators in &micro;SS (Micro Sybollic Script)**
 <table align="center" border="1">
 <tr>
 <th align="center">Sr</th>
@@ -57,7 +57,7 @@
 <br>
 <br>
 
-## **Commands for performing Logical Operations**
+## **Logical Operators in &micro;SS (Micro Sybollic Script)**
 <table align="center" border="1">
 <tr>
 <th align="center">Sr</th>
@@ -77,7 +77,7 @@
 
 <tr>
 <td>2
-<td align="center">orr
+<td align="center">or
 <td align="center">Bitwise
 <td align="center"> Perform bitwise Logical <b>OR</b> operation 
 <td> <a href="utilities/orr.md"> View Usage Details</a> </td>
@@ -101,19 +101,12 @@
 
 <tr>
 <td>5
-<td align="center">>>>
+<td align="center">shift
 <td align="center">Bitwise
-<td align="center"> Perform bitwise <b>Right Shift</b> 
-<td> <a href="utilities/rsh.md"> View Usage Details</a> </td>
+<td align="center"> Perform bitwise shifts.
+<td> <a href="utilities/shift.md"> View Usage Details</a> </td>
 </tr>
 
-<tr>
-<td>6
-<td align="center"><<<
-<td align="center">Bitwise
-<td align="center"> Perform bitwise <b>Left Shift</b> 
-<td> <a href="utilities/lsh.md"> View Usage Details</a> </td>
-</tr>
 
 </table>
 
@@ -121,7 +114,7 @@
 <br>
 <br>
 
-## **System Management and Accessibility Commands**
+## **Keywords and System Commands in &micro;SS (Micro Sybollic Script)**
 <table align="center" border="1">
 <tr>
 <th align="center">Sr</th>
@@ -133,7 +126,7 @@
 
 <tr>
 <td>1
-<td align="center">clr
+<td align="center">clear
 <td align="center">System
 <td align="center"> Clear the serial terminal
 <td> <a href="utilities/term.md"> View Usage Details</a> </td>
@@ -141,65 +134,45 @@
 
 <tr>
 <td>2
-<td align="center">-cl
+<td align="center">reset
 <td align="center">System
 <td align="center">Reset Serial terminal 
 <td> <a href="utilities/term.md"> View Usage Details</a> </td>
 </tr>
 
+
 <tr>
 <td>3
-<td align="center">--r
-<td align="center">System
-<td align="center">Runtime Hard Reset
-<td> <a href="utilities/term.md"> View Usage Details</a> </td>
+<td align="center">enable
+<td align="center">Runtime Critical
+<td align="center">Change Terminal Font Color
+<td> <a href="utilities/enable.md"> View Usage Details</a> </td>
 </tr>
 
 <tr>
 <td>4
-<td align="center">--c
-<td align="center">System
-<td align="center">Change Terminal Font Color
-<td> <a href="utilities/col.md"> View Usage Details</a> </td>
-</tr>
-
-<tr>
-<td>5
-<td align="center">--f
+<td align="center">disable
 <td align="center">Runtime Critical
 <td align="center">Toggle System <b>Fail Safe.</b>
-<td> <a href="utilities/forc.md"> View Usage Details</a> </td>
+<td> <a href="utilities/disable.md"> View Usage Details</a> </td>
 </tr>
 
-<tr>
-<td>6
-<td align="center">--i
-<td align="center">Runtime Critical
-<td align="center">Toggle <b>Infinite Execution</b>
-<td> <a href="utilities/inf.md"> View Usage Details</a> </td>
-</tr>
+
 
 <tr>
-<td>7
-<td align="center">buf
-<td align="center">Data Management
-<td align="center">View current data of Result Buffer in decimal
-<td> <a href="utilities/buf.md"> View Usage Details</a> </td>
+<td> 5
+<td align="center"> sleep
+<td align="center"> Direct Access
+<td align="center"> Not Yet Updated
+<td align="center"> Not Yet Updated
 </tr>
 
-<tr>
-<td>8
-<td align="center">rld
-<td align="center">Data Management
-<td align="center">Load 16-Bit Data in Result buffer.
-<td> <a href="utilities/rld.md"> View Usage Details</a> </td>
-</tr>
 </table>
 
 <br>
 <br>
 
-## **Direct Hardware Access in Micro Virtual - R**
+## **Scripting and Dot Notation in &micro;SS (Micro Sybollic Script)**
 <table align="center" border="1">
 <tr>
 <th align="center">Sr</th>
@@ -211,43 +184,45 @@
 
 <tr>
 <td>1
-<td align="center">dts
+<td align="center">.hwport
 <td align="center">Direct Access
-<td align="center"> Send 8-Bit Data to hardware ports or user variable
-<td> <a href="utilities/dts.md"> View Usage Details</a> </td>
+<td align="center"> Not Yet Updated
+<td> <a> Not Yet Updated</a> </td>
 </tr>
 
 <tr>
 <td>2
-<td align="center">dtg
+<td align="center">.hwid
 <td align="center">Direct Access
-<td align="center"> Subtract any two unsigned numbers.
-<td> <a href="utilities/dtg.md"> View Usage Details</a> </td>
+<td align="center"> Not Yet Updated
+<td> <a>Not Yet Updated</a> </td>
 </tr>
 
 <tr>
 <td> 3
-<td align="center"> tog
+<td align="center"> .toggle
 <td align="center"> Direct Access
 <td align="center"> Not Yet Updated
 <td align="center"> Not Yet Updated
 </tr>
 
+
 <tr>
-<td> 4
-<td align="center"> slp
-<td align="center"> Direct Access
-<td align="center"> Not Yet Updated
-<td align="center"> Not Yet Updated
+<td>4
+<td align="center">.peek
+<td align="center">Not Yet Updated
+<td align="center">Not Yet Updated
+<td> <a>Not Yet Updated</a> </td>
 </tr>
 
 <tr>
-<td> 5
-<td align="center"> bit
-<td align="center"> Direct Access
-<td align="center"> Not Yet Updated
-<td align="center"> Not Yet Updated
+<td>5
+<td align="center">.load
+<td align="center">Not Yet Updated
+<td align="center">Not Yet Updated
+<td> <a >Not Yet Updated</a> </td>
 </tr>
+
 
 <tr>
 <td> *

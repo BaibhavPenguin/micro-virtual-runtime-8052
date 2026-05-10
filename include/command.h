@@ -1,81 +1,58 @@
 #ifndef command_h
 #define command_h
 
+#define no_op 0        //--done
+#define error_op 1     //--done
 
 
-#define cadd 0x46   //add --done
-#define csub 0x41   //sub --done
-#define cdiv 0x50   //div --done
-#define cmul 0x40  //mul --done
-#define cbuf 0x4d  //buf --done
-#define cclr 0x55   //clr --done
-#define ctog 0x4a   //tog
-#define cand 0x43   //and       --done
-#define corr 0x5c   //orr      --done
-#define cnot 0x54   //not       --done
-#define cxor 0x59   //xor       --done
-#define cshiftr 0x3e // >>>     --done
-#define cshiftl 0x3c //<<<      --done
+#define cadd 96  //add --done
+#define csub 16  //sub --done
+#define cdiv 208   //div --done
+#define cmul 194 //mul --done
+#define cclr 112  //clear --done
+#define cand 196      //and       --done
+#define corr 184            //or      --done
+#define cnot 242      //not       --done
+#define cxor 216           //xor       --done
+#define cshiftr 148      //shift
+#define cmod 126        //mod --done
+#define csleep 150      //sleep
+#define crst 170        //reset --done
+#define cdisable 77     //disable--done
+#define cenable 125     //enable --done
 
+#define cerase 23   //erase
 
+#define ctoggle 209  //.toggle
+#define hwport 100  //.hwport
+#define cdefine 37  // .define
+#define ccondt 140  // .condt
+#define cprog 117   // prog
+#define crun 184    // run
+#define cexit 101   // exit
+
+#define cgoto 59    // .goto
+#define cblock 21   // .block
+
+#define cprint 132  //.print
+#define cif 168     // .if
+#define cifnot 50   // .ifnot
+#define cloop 146   // .loop
+#define cfi 141     // .fi
+#define carray 155  // .array
+#define cend 166    // exit
+#define cparse 195  // .parse
+#define cassign 176 // .assign
+#define cdelete 65  // .delete
+#define cterminal 86  //terminal
+#define cload 250       //.load
+ 
 #define c_enter '\r' //On Pressing Enter Key
-#define col 0x63   //--c --done
-#define crst 0x72 //--r --done
-#define forever 0x69 //--i --done
-#define no_op 00        //--done
-#define error_op 01     //--done
-#define ccl 0x6b    //-cl --done
-#define cdts 0x5b   //dts   --done
-#define cdtg 0x4f   //dtg   --done
-#define cld 0x4b //rld --done
-#define csleep 0x5f //slp
-#define cmod 0x45 //mod --done
-#define cdmv 0x52 //dmv     --done
-#define cdmr 0x56 //dmr     --done
-#define cforce 0x66 //--f 
 
 
-static inline void rst_handler(void);
 
-static inline void color_handler(void);
 
-static inline void input_handler(void);
 
-static inline void infinite_flag_handler(void);
-
-static inline void force_flag_handler(void);
-
-static inline void add_handler(void);
-
-static inline void sub_handler(void);
-
-static inline void div_handler(void);
-
-static inline void mul_handler(void);
-
-static void ld_handler(void);   //Don't Cast as Inline as It is used multiple times.
-
-static void dts_handler(void);
-
-static void dtg_handler(void);
-
-static inline void mod_handler(void);
-
-static inline void and_handler(void);
-
-static inline void orr_handler(void);
-
-static inline void xor_handler(void);
-
-static inline void not_handler(void);
-
-static inline void shift_r_handler(void);
-
-static inline void shift_l_handler(void);
-
-static inline void dmv_handler(void);
-
-static inline void dmr_handler(void);
 
 // cls handling done by clear_terminal system routine.
 

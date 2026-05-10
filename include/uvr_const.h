@@ -8,7 +8,7 @@
 
 //================================== LITERALS ===============================================
 
-#define hw_stack 0x60 //Starting Address of Hardware Stack
+#define hw_stack 0xD7 //Starting Address of Hardware Stack
 
 #define timer_l 0x00  //50 ms Master tick at T0 for 11.0592MHz
 
@@ -21,6 +21,7 @@
 #define terminal_reset_byte 0x63
 
 #define buffer_size 32
+
 
 
 
@@ -88,8 +89,14 @@ __code static char failsafe_notice[] = "Err. Fail Safe Enabled\r\n";
 #define len_failsafe_notice2 41
 __code static char failsafe_warning[] = "Warning! This may cause system failure.\r\n";
 
+#define len_programming_enabled_msg 59
+__code static char programming_enabled_msg[59] = "\033[32mLive programming enabled.\r\nEnter code line by line.\r\n";
 
+#define len_program_entered_msg 57
+__code static char program_entered_msg[57] = "\033[0mProgram loaded in memory, use 'run' for execution.\r\n";
 
+#define len_running_program_msg 35
+__code static char running_program_msg[35] = "\033[33mExecuting script at runtime\r\n";
 //================================= System Definitions ==================================
 
 #define supported_ansi_color_operands 0x08 //Supported Colors 
