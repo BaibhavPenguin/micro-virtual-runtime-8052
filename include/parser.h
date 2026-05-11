@@ -12,9 +12,8 @@
 #define backspace 0x7F
 
 
-unsigned char unified_numeric_parser(void);     //Uses temp1
-
-
+unsigned char unified_numeric_parser(void);     
+static void unified_numeric_word_parser(void);  //USES temp_integer
 
 
 static void arithmetic_parser(void);
@@ -25,6 +24,8 @@ static inline void sleep_parser(void);
 
 static inline void exit_parser(void);
 static inline void end_parser(void);
+
+static inline void define_parser(void);
 
 
 

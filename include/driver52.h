@@ -9,6 +9,6 @@ void uart_send(unsigned char);
 void start_timer(void);
 void start_interrupts(void);
 void flush_inp_buffer(void);
-void timer_delay(unsigned char);
+void timer_delay(void);
 
 #endif //driver52_h

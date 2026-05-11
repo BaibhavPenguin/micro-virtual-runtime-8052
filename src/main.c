@@ -29,6 +29,10 @@ void init_sys(void){
 	is_requesting_syscall_access = false;
 	is_input_buffer_reset = false;
 	is_programmed = false;
+
+	err_handler = NO_ERROR;
+	//Error Codes
+	
 } 
 void init_timer(void){
 	//using Timer 2 in 16-Bit Auto Reload Mode 50ms tick
@@ -63,20 +67,15 @@ void flush_inp_buffer(void){
 	loop_counter = reset;
 	is_input_buffer_reset = true;
 }
-void software_delay(unsigned char duration){
-	
-	for(temp0 = reset; temp0 < duration; temp0++){
-		for(temp1 = reset; temp1 < 115; temp1++){
-			for(temp2 = reset; temp2 < 10; temp2++){
-				__asm
-					nop
-				__endasm;
+void software_delay(void) __critical{
+	unsigned int tempY;
+	unsigned int tempX;
+		for(tempX = 0 ; tempX < temp_integer ;tempX++){
+			for(tempY = 0 ; tempY < 1275 ; tempY++){
+				;
 			};
 		};
-	};
-	temp0 = reset;
-	temp1 = reset;
-	temp2 = reset;
+
 	return;
 }
 
@@ -212,6 +211,7 @@ void print_program_enabled_msg(void){
 		loop_counter++;
 	};
 	loop_counter = reset;
+	uart_send(esc_char);uart_send('[');uart_send('3');uart_send('5');uart_send('m');
 }
 void print_program_entered_msg(void){
 	loop_counter = reset;
@@ -234,7 +234,7 @@ void print_program_completed_msg(void){
 	uart_send('D');uart_send('u');uart_send('r');uart_send('a');uart_send('t');uart_send('i');uart_send('o');uart_send('n');uart_send('(');
 	uart_send('m');uart_send('s');uart_send(')');uart_send(' ');
 	if(!result){
-		uart_send('<');uart_send('5');uart_send('0');
+		uart_send('<');uart_send('5');uart_send('0');uart_send('\r');uart_send('\n');
 		goto skip;
 	}
 	temp_integer = result;
@@ -253,8 +253,63 @@ static unsigned char fetch_data_variable(unsigned char identifier_id){
 		}
 		loop_counter++;
 	}
-	return error_op;
+	is_error = true;
+	err_handler = ERR_INVALID_TOKEN;
+	return 255;
 }
+static void create_data_variable(unsigned char identifier_id){
+	loop_counter = reset;
+	while(loop_counter < data_stack_limit){
+		if((virtual_data_stack[loop_counter][symbol]) == reset){
+			virtual_data_stack[loop_counter][symbol] = identifier_id;
+			return;
+		};
+	};
+	loop_counter = reset;
+	is_error = true;
+	err_handler = ERR_DATA_STACK_OVERFLOW;
+}
+static unsigned char fetch_variable_slot(unsigned char identifier_id){
+	loop_counter = reset;
+	while(loop_counter < data_stack_limit){
+		if(virtual_data_stack[loop_counter][symbol] == identifier_id){
+			return loop_counter;
+		}
+		loop_counter++;
+	}
+	is_error = true;
+	err_handler = ERR_INVALID_TOKEN;
+	return 255;
+}
+static void assign_data_variable(unsigned char identifier_id , unsigned char data){
+	temp3 = fetch_variable_slot(identifier_id);
+	if(is_error){
+		return;
+	}
+	virtual_data_stack[temp3][data_segment] = data;
+	return;
+}
+static void delete_data_variable(unsigned char identifier_id){
+	loop_counter = reset;
+	while(loop_counter < data_stack_limit){
+		if(virtual_data_stack[loop_counter][symbol] == identifier_id){
+			virtual_data_stack[loop_counter][symbol] = reset;
+			virtual_data_stack[loop_counter][data_segment] = reset;
+		}
+		loop_counter++;
+	}
+	is_error = true;
+	err_handler = ERR_INVALID_TOKEN;
+	return;
+}
+
+
+
+
+
+
+
+
 
 unsigned char unified_numeric_parser(void){
 	operand_parser:
@@ -277,6 +332,29 @@ unsigned char unified_numeric_parser(void){
 					increment_ip_buffer_agent();
 				};
 				return temp1;
+	}
+}
+static void unified_numeric_word_parser(void){
+	ld_parser:
+	switch(input_buffer[ip_buffer_agent]){
+		case backspace:
+			increment_ip_buffer_agent();
+			goto ld_parser;
+		case whitespc:
+			increment_ip_buffer_agent();
+			goto ld_parser;
+		default:
+				temp_integer  = 0;
+				while(input_buffer[ip_buffer_agent] != whitespc){
+					
+					if(input_buffer[ip_buffer_agent] == c_enter){
+						break;
+					};
+					temp_integer *= 10;
+					temp_integer += input_buffer[ip_buffer_agent] - 0x30;
+					increment_ip_buffer_agent();
+				};
+				
 	}
 }
 
@@ -348,7 +426,48 @@ static inline void mul_handler(void){
 	skip:
 
 }
+static inline void div_handler(void){
 
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+
+	if(op1 == 0 && op2 == 0){
+		is_error = true;
+		err_handler = ERR_ZERO_DIVISION;
+		goto skip;
+	};
+	if(op1 != 0 && op2 == 0){
+		result = result / op1;
+		goto skip;
+	};
+	
+	result = op1 / op2;
+	skip:
+
+}
+static inline void mod_handler(void){
+
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+
+	if(op1 == 0 && op2 == 0){
+		is_error = true;
+		err_handler = ERR_ZERO_DIVISION;
+		goto skip;
+	};
+	if(op1 != 0 && op2 == 0){
+		result = result % op1;
+		goto skip;
+	};
+	
+	result = op1 % op2;
+	skip:
+
+}
 
 
 static inline void end_parser(void){
@@ -429,6 +548,7 @@ static inline void print_handler(void){
 			temp_integer = P3;
 			break;
 		case dot_result:
+			uart_send('v');uart_send('A');uart_send('C');uart_send('C');uart_send(':');uart_send(' ');
 			temp_integer = result;
 			break;
 		default:
@@ -438,94 +558,41 @@ static inline void print_handler(void){
 }
 
 static inline void sleep_parser(void){
-	op1 = unified_numeric_parser();
+	unified_numeric_word_parser();
 	program_buffer[virtual_program_counter] = instruction_buffer;
 	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = op1;
+	program_buffer[virtual_program_counter] = (temp_integer &= 0xff);
+	temp_integer = temp_integer >> 8;
 	increment_virtual_program_counter();
-
+	program_buffer[virtual_program_counter] = (temp_integer &= 0xff);
+	increment_virtual_program_counter();
 }
 static inline void sleep_handler(void){
 	increment_virtual_program_counter();
-	op1 = program_buffer[virtual_program_counter];
-	software_delay(op1);
+	temp_integer = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	temp_integer = temp_integer << 8;
+	temp_integer |= program_buffer[virtual_program_counter];
+	temp_integer = temp_integer >> 8;
+	software_delay();
 }
+
+static inline void define_parser(void){
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	op1 = unified_numeric_parser();
+	program_buffer[virtual_program_counter] = op1;
+	increment_virtual_program_counter();
+}
+static inline void define_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	create_data_variable(op1);
+}
+
 
 /*
-static inline void sub_handler(void){
-	op1 = unified_numeric_parser();
-	op2 = unified_numeric_parser();
-	if(op1 == 0 && op2 == 0){
-		result = 0;
-		goto print;
-	};
-	if(op1 != 0 && op2 == 0){
-		result = result - op1;
-		goto print;
-	};
-	result = op1 - op2;
-	
-	print:
-	print_result_buffers();
 
-
-}
-static inline void div_handler(void){
-	op1 = unified_numeric_parser();
-	op2 = unified_numeric_parser();
-	if(op1 == 0 && op2 == 0){
-		is_error = 1;
-		return;
-	};
-	if(op1 != 0 && op2 == 0){
-		result = result / op1;
-		goto print;
-	}
-	result = op1 / op2;
-	
-	print:
-	print_result_buffers();
-
-
-}
-static inline void mul_handler(void){
-	op1 = unified_numeric_parser();
-	op2 = unified_numeric_parser();
-
-	if(op1 != 0 && op2 == 0){
-		result = result * op1;
-		goto print;
-	}
-	result = op1 * op2;
-	
-	print:
-	print_result_buffers();
-
-
-}
-static void ld_handler(void){
-	ld_parser:
-	switch(input_buffer[ip_buffer_agent]){
-		case backspace:
-			increment_ip_buffer_agent();
-			goto ld_parser;
-		case whitespc:
-			increment_ip_buffer_agent();
-			goto ld_parser;
-		default:
-				result = 0;
-				while(input_buffer[ip_buffer_agent] != whitespc){
-					
-					if(input_buffer[ip_buffer_agent] == c_enter){
-						break;
-					};
-					result *= 10;
-					result += input_buffer[ip_buffer_agent] - 0x30;
-					increment_ip_buffer_agent();
-				};
-				is_success = 1;
-		}
-}
 
 static inline void not_handler(void){
 	ld_handler();
@@ -544,24 +611,6 @@ static inline void shift_r_handler(void){
 	result = op2 >> op1;
 	print:
 	print_result_buffers();
-}
-static inline void mod_handler(void){
-	op1 = unified_numeric_parser();
-	op2 = unified_numeric_parser();
-	if(op1 == 0 && op2 == 0){
-		is_error = 1;
-		return;
-	};
-	if(op1 != 0 && op2 == 0){
-		result = result % op1;
-		goto print;
-	}
-	result = op1 % op2;
-	
-	print:
-	print_result_buffers();
-
-
 }
 static inline void and_handler(void){
 	op1 = unified_numeric_parser();
@@ -606,7 +655,6 @@ static inline void xor_handler(void){
 
 
 }
-
 static inline void force_flag_handler(void){
 	loop_counter = reset;
 	if(fail_safe_enabled){
@@ -702,7 +750,10 @@ static inline void runtime_fail_restore_seq(void){
 	wr_pointer = &input_buffer[0];
 	rd_pointer = &input_buffer[0];
 	ip_buffer_agent = reset;
-	
+	if(state_programming_enabled){
+		uart_send(esc_char);uart_send('[');uart_send('3');uart_send('4');uart_send('m');
+	}
+
 	EA = enable;
 	ES = enable;
 
@@ -772,15 +823,15 @@ static inline void runtime_reset_seq(void){
 }
 static inline void runtime_state_cleanup(void){
 	if(is_success){
-			print_success_message();
-			is_success = false;
-		};
+		print_success_message();
+		is_success = false;
+	};
 
-		if(is_error){
-			print_invalid_cmd();
-			runtime_fail_restore_seq();
-			is_error = false;
-		};
+	if(is_error){
+		print_invalid_cmd();
+		runtime_fail_restore_seq();
+		is_error = false;
+	};
 		is_recieved = false;
 }
 static inline void runtime_reset_state(void){
@@ -851,7 +902,8 @@ static inline void runtime_command_parser(void){
 	
 	parser_loop:
 	switch(instruction_buffer){
-		
+		case cdiv:
+		case cmod:
 		case cmul:
 		case csub:
 		case cadd:
@@ -865,6 +917,9 @@ static inline void runtime_command_parser(void){
 			break;
 		case csleep:
 			sleep_parser();
+			break;
+		case cdefine:
+			define_parser();
 			break;
 		case cend:
 			end_parser();
@@ -899,19 +954,31 @@ void runtime_command_exec(void){
 			case cmul:
 				mul_handler();
 				break;
+			case cdiv:
+				div_handler();
+				break;
+			case cmod:
+				mod_handler();
+				break;
 			case cprint:
 				print_handler();
 				break;
 			case csleep:
 				sleep_handler();
 				break;
+			case cdefine:
+				define_handler();
+				break;
 			case cend:
 				end_handler();
 				break;
 			default:
 				
-				
 			
+		}
+		if(is_error){
+			//print_program_error_code();
+			break;
 		}
 		increment_virtual_program_counter();
 	}

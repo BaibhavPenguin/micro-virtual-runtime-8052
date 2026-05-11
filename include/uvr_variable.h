@@ -16,12 +16,13 @@ volatile unsigned char __data __at (0x33)  *wr_pointer;
 volatile unsigned char __data __at (0x34)  system_tick = 0; //Common System Time
 volatile unsigned char __data __at (0x35) op1 = 0; //Operand Buffer
 volatile unsigned char __data __at (0x36) op2 = 0; //perand Buffer
-volatile unsigned char __data __at (0x37)  active_timer = 0; //To Calculate Timer Differences
+volatile unsigned char __data __at (0x37)  err_handler = 0; //To Calculate Timer Differences
 
 volatile unsigned char __data __at (0x38) temp0 = 0;
 volatile unsigned char __data __at (0x39) temp1 = 0;
 volatile unsigned char __data __at (0x3A) temp2 = 0; //Temporary Variables
-volatile unsigned char __data __at (0x3C) temp3 = 0;
+volatile unsigned char __data __at (0x3B) temp3 = 0;
+volatile unsigned char __data __at (0x3C) virtual_program_counter = 0;
 
 volatile unsigned char __data __at (0x3D) instruction_buffer = 0;
 volatile unsigned int __data __at (0x3E) result = 0;
@@ -33,8 +34,10 @@ volatile unsigned char __data __at (0x40) input_buffer[32] = {0};
 volatile unsigned char __data __at (0x60) virtual_data_stack[10][2] = {{0}};
 volatile unsigned char __data __at (0x75) result_char_buffer[5] = {'0'};
 volatile unsigned int __data __at(0x7A) temp_integer = 0;
-volatile unsigned char __data __at(0x7C) virtual_program_counter = 0;
-volatile unsigned char __data __at(0x7E) condt_name = 0;
+
+volatile unsigned int __data __at(0x7C) xword = 0;
+volatile unsigned char __data __at(0x7E) op3 = 0;
+volatile unsigned char __data __at(0x7F) op4 = 0;
 
 
 volatile unsigned char __idata __at(0x80) virtual_call_stack[4][2] = {{0}};
@@ -58,4 +61,5 @@ __bit __at(0x09) is_requesting_syscall_access;
 __bit __at(0x10) state_executing_script;
 __bit __at(0x11) is_input_buffer_reset;
 __bit __at(0x12) is_programmed;
+
 #endif //uvr_variable_h

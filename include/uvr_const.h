@@ -102,6 +102,35 @@ __code static char running_program_msg[35] = "\033[33mExecuting script at runtim
 #define supported_ansi_color_operands 0x08 //Supported Colors 
 #define ascii_zero_char '0'
 #define ascii_three_char '3'
+
+
+
+
+//===================== ERR CODES =================
+
+#define ERR_GENERIC_EXEC_FAILURE 0xff
+#define ERR_ZERO_DIVISION 0x01
+#define ERR_INVALID_TOKEN 0x02
+#define ERR_DATA_STACK_OVERFLOW 0x03
+#define ERR_CALL_STACK_OVERFLOW 0x04
+#define ERR_NONPERMITTED_ACCESS 0x05
+#define ERR_INVALID_BLOCK 0x06
+#define ERR_INVALID_OPERAND 0x07
+#define NO_ERROR 0x00
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif //uvr_const_h
+
 
 
