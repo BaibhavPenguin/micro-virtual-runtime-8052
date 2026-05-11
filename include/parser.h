@@ -26,6 +26,7 @@ static inline void exit_parser(void);
 static inline void end_parser(void);
 
 static inline void define_parser(void);
+static inline void assign_parser(void);
 
 
 

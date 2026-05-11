@@ -47,15 +47,6 @@ __code static char invalid_msg[35] = {
     'I','n','v','a','l','i','d',' ','o','r',' ','I','n','c','o','m','p','l','e','t','e',' ','C','o','m','m','a','n','d','\r','\n' , 0x1B , '[' , '0' ,'m'
 };
 
-#define decimal_table 10
-__code static char ascii_codes[] = {
-    0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39
-};
-
-#define len_wait_msg 15
-__code static char wait_msg[15] = {
-    'P','r','o','c','e','s','s','i','n','g','.','.','.','\r','\n'
-};
 
 #define len_success_msg 6
 __code static char success_msg[6] = {
@@ -86,8 +77,7 @@ __code static char failsafe_disabled_msg[] = "Fail Safe Disabled\r\n";
 #define len_failsafe_notice 25
 __code static char failsafe_notice[] = "Err. Fail Safe Enabled\r\n";
 
-#define len_failsafe_notice2 41
-__code static char failsafe_warning[] = "Warning! This may cause system failure.\r\n";
+
 
 #define len_programming_enabled_msg 59
 __code static char programming_enabled_msg[59] = "\033[32mLive programming enabled.\r\nEnter code line by line.\r\n";
@@ -117,8 +107,6 @@ __code static char running_program_msg[35] = "\033[33mExecuting script at runtim
 #define ERR_INVALID_BLOCK 0x06
 #define ERR_INVALID_OPERAND 0x07
 #define NO_ERROR 0x00
-
-
 
 
 

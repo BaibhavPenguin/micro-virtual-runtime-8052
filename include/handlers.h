@@ -23,7 +23,7 @@ static inline void parse_handler(void);
 static inline void print_handler(void);
 static inline void sleep_handler(void);
 
-
+static void unified_arithmetic_core(void);
 
 
 static inline void infinite_flag_handler(void);
@@ -31,8 +31,7 @@ static inline void force_flag_handler(void);
 
 
 static inline void define_handler(void);
-
-
+static inline void assign_handler(void);
 
 
 
