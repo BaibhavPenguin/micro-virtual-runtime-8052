@@ -7,12 +7,11 @@ BLCK=10
 echo ".hex file to flash?"
 read -r FPATH
 
-if [[-z "$FPATH"]]; then
+if [[ -z "$1" ]]; then
 	echo "Fatal Error! : File or Directory not found!"
 	exit 1
 fi
 
-FPATH ="$1"
 
-avrdude \-C "$CONF" \-c "$PROG" \-p "$PART" \-B "$BLCK" \-U flash:w:"$FPATH":i
+avrdude \-C "$CONF" \-c "$PROG" \-p "$PART" \-B "$BLCK" \-U flash:w:"$1":i
 
