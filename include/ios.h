@@ -11,10 +11,10 @@ void print_wait_message(void);
 void print_success_message(void);
 void print_invalid_cmd(void);
 void terminal_reset(void);
-void input_char_serial_polling(void);
+
 void print_output_buffers_dec(void);
 void print_output_buffers_bin(void);
-void print_fail_safe_notice(void);
+
 
 void print_program_enabled_msg(void);
 void print_program_entered_msg(void);

@@ -8,13 +8,6 @@ static inline void live_terminal_clear_handler(void);
 static inline void live_debug_parser_handler(void);
 static inline void prog_erase_handler(void);
 
-static inline void add_handler(void);
-static inline void sub_handler(void);
-static inline void mul_handler(void);
-static inline void div_handler(void);
-
-
-
 static inline void prog_handler(void);
 static inline void exit_handler(void);
 static inline void run_handler(void);
@@ -24,14 +17,19 @@ static inline void print_handler(void);
 static inline void sleep_handler(void);
 
 static void unified_arithmetic_core(void);
-
-
-static inline void infinite_flag_handler(void);
-static inline void force_flag_handler(void);
+static void single_operand_logic_handler(void);
 
 
 static inline void define_handler(void);
 static inline void assign_handler(void);
+
+static void rshift_handler(void);
+static void lshift_handler(void);
+static inline void if_handler(void);
+static inline void hwport_handler(void);
+static void toggle_handler(void);
+
+static inline void copy_handler(void);
 
 
 

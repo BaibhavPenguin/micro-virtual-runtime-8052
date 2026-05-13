@@ -49,17 +49,17 @@ volatile unsigned char __idata __at(0x88) program_buffer[80] = {0};
 
 //============================== FLAGS ===========================
 __bit __at(0x00) is_recieved;
-__bit __at(0x01) infinite_exec;
+__bit __at(0x01) is_programmed;
 __bit __at(0x02) is_error;
 __bit __at(0x03) echo_e;
 __bit __at(0x04) is_success;
 __bit __at(0x05) machine_state;
-__bit __at(0x06) fail_safe_enabled;
+__bit __at(0x06) hardware_operation_input;
 __bit __at(0x07) backspace_block;
 __bit __at(0x08) state_programming_enabled;
 __bit __at(0x09) is_requesting_syscall_access;
 __bit __at(0x10) state_executing_script;
 __bit __at(0x11) is_input_buffer_reset;
-__bit __at(0x12) is_programmed;
+\
 
 #endif //uvr_variable_h

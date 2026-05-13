@@ -16,10 +16,9 @@ void init_sys(void){
 	ET2 = enable;
 	machine_state = state_listener;
 	is_recieved = false;
-	infinite_exec = false;
 	is_error = false;
 	echo_e = false;
-	fail_safe_enabled = true;
+	hardware_operation_input = true;
 	wr_pointer = &input_buffer[0];
 	rd_pointer = &input_buffer[0];
 	ip_buffer_agent = reset;
@@ -184,14 +183,15 @@ void print_output_buffers_dec(void){
 void print_output_buffers_bin(void){
 
 	while(temp_integer){
-		temp0 = temp_integer & 0x01;
+		temp0 = temp_integer & 0b10000000;
+		temp0 = temp0>>7;
 		if(temp0){
 			uart_send('1');
 		}
 		else{
 			uart_send('0');
 		}
-		temp_integer = temp_integer >> 1;
+		temp_integer = temp_integer << 1;
 	}
 	uart_send('\r');uart_send('\n');
 
@@ -199,14 +199,7 @@ void print_output_buffers_bin(void){
 void terminal_reset(void){
 	uart_send(esc_char);uart_send(terminal_reset_byte); //Full Reset Terminal
 }
-void print_fail_safe_notice(void){
-	loop_counter = reset;
-	while(loop_counter != len_failsafe_notice){
-		uart_send(failsafe_notice[loop_counter]);
-		loop_counter++;
-	};
-	loop_counter = reset;
-}
+
 void print_program_enabled_msg(void){
 	loop_counter = reset;
 	while(loop_counter < len_programming_enabled_msg){
@@ -311,10 +304,6 @@ static void delete_data_variable(unsigned char identifier_id){
 
 
 
-
-
-
-
 unsigned char unified_numeric_parser(void){
 	operand_parser:
 	switch(input_buffer[ip_buffer_agent]){
@@ -361,8 +350,38 @@ static void unified_numeric_word_parser(void){
 				
 	}
 }
+static inline void single_operand_line_parser(void){
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	op1 = unified_numeric_parser();
+	program_buffer[virtual_program_counter] = op1;
+	increment_virtual_program_counter();
+}
+static void dual_operand_line_parser(void){
+	op1 = unified_numeric_parser();
+	op2 = unified_numeric_parser();
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = op1;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = op2;
+	increment_virtual_program_counter();
+}
+static void tri_operand_line_parser(void){
+	op1 = unified_numeric_parser();
+	op2 = unified_numeric_parser();
+	op3 = unified_numeric_parser();
 
-static void arithmetic_parser(void){
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = op1;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = op2;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = op3;
+	increment_virtual_program_counter();
+}
+static void quad_operand_line_parser(void){
 
 	op1 = unified_numeric_parser();
 	op2 = unified_numeric_parser();
@@ -383,6 +402,9 @@ static void arithmetic_parser(void){
 
 
 }
+
+
+
 
 static void unified_arithmetic_core(void){
 	instruction_buffer = program_buffer[virtual_program_counter];
@@ -424,7 +446,6 @@ static void unified_arithmetic_core(void){
 		default:
 			is_error = 1;
 			err_handler = ERR_INVALID_OPERAND;
-
 	};
 
 	switch(instruction_buffer){
@@ -482,7 +503,54 @@ static void unified_arithmetic_core(void){
 			};
 			break;
 		
-		
+		case cand:
+			if(temp0 == 0){
+				is_error = 1;
+				err_handler = ERR_INVALID_OPERAND;
+				break;
+			};
+			if(temp1 == 0){
+				temp_integer = temp_integer & temp0;
+				break;
+			}
+			else{
+				temp_integer =  temp0 & temp1;
+			};
+			break;
+
+			case corr:
+			if(temp0 == 0){
+				is_error = 1;
+				err_handler = ERR_INVALID_OPERAND;
+				break;
+			};
+			if(temp1 == 0){
+				temp_integer = temp_integer | temp0;
+				break;
+			}
+			else{
+				temp_integer =  temp0 | temp1;
+			};
+			break;
+
+		case cxor:
+			if(temp0 == 0){
+				is_error = 1;
+				err_handler = ERR_INVALID_OPERAND;
+				break;
+			};
+			if(temp1 == 0){
+				temp_integer = temp_integer & temp0;
+				break;
+			}
+			else{
+				temp_integer =  temp0 & temp1;
+			};
+			break;
+
+		default:
+				is_error = 1;
+				err_handler = ERR_INVALID_OPERAND;
 	}
 
 	switch(op4){
@@ -501,9 +569,70 @@ static void unified_arithmetic_core(void){
 	
 
 }
+static void single_operand_logic_handler(void){
+	instruction_buffer = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+	
+	switch(instruction_buffer){
+		case cnot:
+			if(op1 == dat_flag){
+				temp0 = fetch_data_variable(op2);
+				temp0 = ~temp0;
+				assign_data_variable(op2,temp0);
+				break;
+			};
+			if(op1 == dot_result ){
+				result = ~result;
+				break;
+			};
+			if(op1 == dot_xword){
+				xword = ~xword;
+				break;
+			};
+			break;
 
+		case cincrement:
+			if(op1 == dat_flag){
+				temp0 = fetch_data_variable(op2);
+				temp0++;
+				assign_data_variable(op2,temp0);
+				break;
+			};
+			if(op1 == dot_result ){
+				result++;
+				break;
+			};
+			if(op1 == dot_xword){
+				xword++;
+				break;
+			};
+			break;
+		case cdecrement:
+			if(op1 == dat_flag){
+				temp0 = fetch_data_variable(op2);
+				temp0--;
+				assign_data_variable(op2,temp0);
+				break;
+				};
+			if(op1 == dot_result ){
+				result--;
+				break;
+				};
+			if(op1 == dot_xword){
+				xword--;
+				break;
+				};
+			break;
+		default:
+			is_error = 1;
+			err_handler = ERR_INVALID_OPERAND;
+	};
+	
 
-
+}
 static inline void end_parser(void){
 	program_buffer[virtual_program_counter] = instruction_buffer;
 	increment_virtual_program_counter();
@@ -513,7 +642,6 @@ static inline void end_handler(void){
 	is_success = true;
 	print_program_completed_msg();
 }
-
 static inline void prog_handler(void){
 	state_programming_enabled = true;
 	state_executing_script = false;
@@ -535,7 +663,6 @@ static inline void run_handler(void){
 		//print_invalid_prog_msg();
 	}
 }
-	
 static inline void parse_handler(void){
 	op1 = unified_numeric_parser();
 	temp_integer = op1;
@@ -555,18 +682,6 @@ static inline void prog_erase_handler(void){
 	loop_counter = reset;
 	is_programmed = false;
 	//print_prog_erased_msg();
-}
-
-
-static inline void print_parser(void){
-	op1 = unified_numeric_parser();
-	op2 = unified_numeric_parser();
-	program_buffer[virtual_program_counter] = instruction_buffer;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = op1;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = op2;
-	increment_virtual_program_counter();
 }
 static inline void print_handler(void){
 	increment_virtual_program_counter();
@@ -610,7 +725,6 @@ static inline void print_handler(void){
 	};
 	
 }
-
 static inline void sleep_parser(void){
 	unified_numeric_word_parser();
 	program_buffer[virtual_program_counter] = instruction_buffer;
@@ -630,32 +744,10 @@ static inline void sleep_handler(void){
 	temp_integer = temp_integer >> 8;
 	software_delay();
 }
-
-static inline void define_parser(void){
-	program_buffer[virtual_program_counter] = instruction_buffer;
-	increment_virtual_program_counter();
-	op1 = unified_numeric_parser();
-	program_buffer[virtual_program_counter] = op1;
-	increment_virtual_program_counter();
-}
 static inline void define_handler(void){
 	increment_virtual_program_counter();
 	op1 = program_buffer[virtual_program_counter];
 	create_data_variable(op1);
-}
-
-static inline void assign_parser(void){
-	program_buffer[virtual_program_counter] = instruction_buffer;
-	increment_virtual_program_counter();
-
-	op1 = unified_numeric_parser();
-	op2 = unified_numeric_parser();
-
-	program_buffer[virtual_program_counter] = op1;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = op2;
-	increment_virtual_program_counter();
-
 }
 static inline void assign_handler(void){
 	increment_virtual_program_counter();
@@ -663,6 +755,182 @@ static inline void assign_handler(void){
 	increment_virtual_program_counter();
 	op2 = program_buffer[virtual_program_counter];
 	assign_data_variable(op1,op2);
+}
+static void lshift_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op3 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op4 = program_buffer[virtual_program_counter];
+
+	switch(op1){
+		case dat_flag:
+			temp_integer = fetch_data_variable(op2);
+			break;
+		case dot_result:
+			temp_integer = result;
+			break;
+		case dot_xword:
+			temp_integer = xword;
+			break;
+		default:
+			is_error = true;
+			err_handler = ERR_INVALID_OPERAND;
+			return;
+		
+	}
+	temp_integer = temp_integer << op3;
+	
+
+	switch(op4){
+		case dot_result:
+			result = temp_integer;
+			break;
+		case dot_xword:
+			xword = temp_integer;
+			break;
+		default:
+			temp0 = temp_integer;
+			assign_data_variable(op4,temp0);
+			
+	}
+	return;
+}
+static void rshift_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op3 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op4 = program_buffer[virtual_program_counter];
+
+	switch(op1){
+		case dat_flag:
+			temp_integer = fetch_data_variable(op2);
+			break;
+		case dot_result:
+			temp_integer = result;
+			op4 = op3;
+			op3 = op2;
+			break;
+		case dot_xword:
+			temp_integer = xword;
+			op4 = op3;
+			op3 = op2;
+			break;
+		default:
+			is_error = true;
+			err_handler = ERR_INVALID_OPERAND;
+			return;
+		
+	}
+	temp_integer = temp_integer >> op3;
+	
+
+	switch(op4){
+		case dot_result:
+			result = temp_integer;
+			break;
+		case dot_xword:
+			xword = temp_integer;
+			break;
+		default:
+			temp0 = temp_integer;
+			assign_data_variable(op4,temp0);
+			
+	}
+	return;
+}
+static void hwport_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op3 = program_buffer[virtual_program_counter];
+
+	if(op1 == operand_read){
+		switch(op2){
+			case port0:
+				temp0 = P0;
+				break;
+			case port1:
+				temp0 = P1;
+				break;
+			case port2:
+				temp0 = P2;
+				break;
+			case port3:
+				temp0 = P3;
+				break;
+			default:
+				is_error = 1;
+				err_handler = ERR_INVALID_TOKEN;
+				return;
+		};
+		assign_data_variable(op3,temp0);
+		return;
+	};
+
+	if(op1 == operand_write){
+		temp0 = fetch_data_variable(op3);
+		switch(op2){
+			case port0:
+				P0 = temp0;
+				break;
+			case port1:
+				P1 = temp0;
+				break;
+			case port2:
+				P2 = temp0;
+				break;
+			case port3:
+				P3 = temp0;
+				break;
+			default:
+				is_error = 1;
+				err_handler = ERR_INVALID_TOKEN;
+				return;
+		};
+		return;
+	};
+	
+	
+	switch(op2){
+			case port0:
+				P0 = op3;
+				break;
+			case port1:
+				P1 = op3;
+				break;
+			case port2:
+				P2 = op3;
+				break;
+			case port3:
+				P3 = op3;
+				break;
+			default:
+				is_error = 1;
+				err_handler = ERR_INVALID_TOKEN;
+				return;
+		};
+	
+	return;
+}
+static inline void copy_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+
+	temp0 = fetch_data_variable(op1);
+	assign_data_variable(op2,temp0);
+
 }
 
 //==================================================================================
@@ -712,13 +980,12 @@ static inline void runtime_fail_restore_seq(void){
 	op1 = reset;
 	op2 = reset;
 	loop_counter = reset;
-	infinite_exec = false;
 	is_recieved = false;
 	wr_pointer = &input_buffer[0];
 	rd_pointer = &input_buffer[0];
 	ip_buffer_agent = reset;
 	if(state_programming_enabled){
-		uart_send(esc_char);uart_send('[');uart_send('3');uart_send('4');uart_send('m');
+		uart_send(esc_char);uart_send('[');uart_send('3');uart_send('5');uart_send('m');
 	}
 
 	EA = enable;
@@ -774,9 +1041,7 @@ static inline void runtime_memory_mgmt(void){
 	is_input_buffer_reset = false;
 
 }
-static inline void runtime_forbidden_access(void){
 
-}
 static inline void runtime_terminal_reset(void){
 	terminal_reset();
 }
@@ -828,10 +1093,6 @@ static inline void runtime_hwinit_seq(void){
 static inline void runtime_syscall_request_handler(void){
 	if(is_requesting_syscall_access == true && state_programming_enabled == false){
 		switch(instruction_buffer){
-			case cenable :
-				break;
-			case cdisable:
-				break;
 			case crst:
 				runtime_reset_seq();
 				break;
@@ -868,27 +1129,42 @@ static inline void runtime_command_parser(void){
 	
 	parser_loop:
 	switch(instruction_buffer){
+		case crshift:
+		case clshift:
+		case cand:
+		case corr:
+		case cxor:
 		case cdiv:
 		case cmod:
 		case cmul:
 		case csub:
 		case cadd:
-			arithmetic_parser();
+			quad_operand_line_parser();
+			break;
+		case cloop:
+		case cblock:
+		case cprint:
+		case cassign:
+		case ccopy:
+		case cnot:
+		case cincrement:
+		case cdecrement:
+			dual_operand_line_parser();
+			break;
+		case cload:
+		case cif:
+		case hwport:
+			tri_operand_line_parser();
 			break;
 		case cexit:
 			exit_handler();
 			break;
-		case cprint:
-			print_parser();
-			break;
 		case csleep:
 			sleep_parser();
 			break;
+		case cgoto:
 		case cdefine:
-			define_parser();
-			break;
-		case cassign:
-			assign_parser();
+			single_operand_line_parser();
 			break;
 		case cend:
 			end_parser();
@@ -914,6 +1190,9 @@ void runtime_command_exec(void){
 	while(state_executing_script){
 		instruction_buffer = program_buffer[virtual_program_counter];
 		switch(instruction_buffer){
+			case cand:
+			case corr:
+			case cxor:
 			case cadd:
 			case csub:
 			case cmul:
@@ -921,18 +1200,34 @@ void runtime_command_exec(void){
 			case cmod:
 				unified_arithmetic_core();
 				break;
-			
+			case cnot:
+			case cincrement:
+			case cdecrement:
+				single_operand_logic_handler();
+				break;
 			case cprint:
 				print_handler();
 				break;
 			case csleep:
 				sleep_handler();
 				break;
+			case crshift:
+				rshift_handler();
+				break;
+			case clshift:
+				lshift_handler();
+				break;
 			case cdefine:
 				define_handler();
 				break;
 			case cassign:
 				assign_handler();
+				break;
+			case hwport:
+				hwport_handler();
+				break;
+			case ccopy:
+				copy_handler();
 				break;
 			case cend:
 				end_handler();

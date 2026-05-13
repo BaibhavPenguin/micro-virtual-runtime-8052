@@ -26,6 +26,16 @@
 
 
 #define val_flag 223 //.value
-#define dat_flag 42 //.datax
+#define dat_flag 253 //.datax
+
+#define operand_exceeds 119     // exceeds
+#define operand_preceeds 215       // preceeds
+#define operand_equ 131 // equ
+#define operand_neq 139 // neq
+
+
+#define operand_read 130 //.read
+#define operand_write 33 // .write
+#define operand_wrdata 29 //.wrdata
 
 #endif //flags_h

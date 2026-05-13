@@ -58,26 +58,8 @@ __code static char error_msg[12] = {
     0x1B , '[' , '3', '1' , 'm' , 'E' , 'R' , 'R' , 'O' , 'R' , '!' , ' ',
 };
 
-#define len_infinite_enabled 24
-__code static char infinite_enabled_msg[] = "Infinite Loops Enabled\r\n";
-
-#define len_infinite_disabled 25
-__code static char infinite_disabled_msg[] = "Infinite Loops Disabled\r\n";
-
-#define len_info_msg 70
-__code unsigned char info_msg[] = "Buffers were cleared. Machine state and previous results were saved!\r\n";
-
-
-#define len_failsafe_enabled 19
-__code static char failsafe_enabled_msg[] = "Fail Safe Enabled\r\n";
-
-#define len_failsafe_disabled 20
-__code static char failsafe_disabled_msg[] = "Fail Safe Disabled\r\n";
-
-#define len_failsafe_notice 25
-__code static char failsafe_notice[] = "Err. Fail Safe Enabled\r\n";
-
-
+#define len_program_erased 17
+__code static char prog_erased_msg[17] = "Program Erased\r\n";
 
 #define len_programming_enabled_msg 59
 __code static char programming_enabled_msg[59] = "\033[32mLive programming enabled.\r\nEnter code line by line.\r\n";

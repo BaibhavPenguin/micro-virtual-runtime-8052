@@ -4,8 +4,6 @@ PART=AT89S52
 PROG=usbasp
 BLCK=10
 
-echo ".hex file to flash?"
-read -r FPATH
 
 if [[ -z "$1" ]]; then
 	echo "Fatal Error! : File or Directory not found!"
