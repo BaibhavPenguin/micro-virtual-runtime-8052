@@ -1,4 +1,4 @@
-[![Micro Virtual Runtime AT89S52 Build Status](https://github.com/BaibhavPenguin/micro-virtual-runtime-8052)](https://github.com/BaibhavPenguin/micro-virtual-runtime-8052)
+[![Micro Virtual Runtime AT89S52 Build Status](../../workflows/build.yml/badge.svg?branch=main)](../../actions/workflows/build.yml)
 # **Micro Virtual Runtime (&micro;VR AT89S52)** <br>
 **Micro Virtual - R Copyright 2026 Baibhav Bhattacharya** <br>
 **Micro Virtual - R** is a minimal runtime enviornment for Micro Controllers. This specific rendition of Micro Virtual - R is designed in compatibility with 8052 Class Microcontrollers MCS51 specifically AT89S52.
