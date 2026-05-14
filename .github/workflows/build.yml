@@ -14,8 +14,8 @@ jobs:
 
             - name: Run Build Script
               run: |
-                chmod +x ./build.sh
-                ./buid.sh buildsave
+                chmod +x $GITHUB_WORKSPACE/build.sh
+                $GITHUB_WORKSPACE/build.sh buildsave
 
             - name: Save Compiled Binary
               uses: actions/upload-artifact@v4
