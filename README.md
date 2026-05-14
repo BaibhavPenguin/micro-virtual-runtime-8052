@@ -1,4 +1,5 @@
-[![Build Status](https://shields.io)](../../actions/workflows/build.yml)
+[![Build Status](![Static Badge](https://img.shields.io/badge/PASSSED%20-%20?style=flat-square&logoSize=%20&label=BUILD%20&labelColor=grey&color=green)
+)](../../actions/workflows/build.yml)
 # **Micro Virtual Runtime (&micro;VR AT89S52)** <br>
 **Micro Virtual - R Copyright 2026 Baibhav Bhattacharya** <br>
 **Micro Virtual - R** is a minimal runtime enviornment for Micro Controllers. This specific rendition of Micro Virtual - R is designed in compatibility with 8052 Class Microcontrollers MCS51 specifically AT89S52.
