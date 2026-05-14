@@ -1,7 +1,5 @@
 [![Static Badge](https://img.shields.io/badge/STATUS%20-%20?style=flat-square&logoSize=%20&label=BUILD%20&labelColor=grey&color=blue)](../../actions/workflows/build.yml)
-
 [![Static Badge](https://img.shields.io/badge/HOMEPAGE%20-%20VIEW%20HOMEPAGE?style=flat-square&logoSize=%20&label=VIEW%20&labelColor=grey&color=orange)](https://sites.google.com/view/micro-virtual-runtime-8052/)
-
 [![Static Badge](https://img.shields.io/badge/CHANGELOG%20-%20VIEW%20CHANGELOG?style=flat-square&logoSize=%20&label=VIEW%20&labelColor=grey&color=purple)](https://sites.google.com/view/devblog-microvr8052/)
 
 # **Micro Virtual Runtime (&micro;VR AT89S52)** <br>
