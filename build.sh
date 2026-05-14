@@ -4,12 +4,11 @@ source "config/build.conf"
 
 TIMEF=$(date +%H.%M.%S)
 
-echo "Deploy or Build for Debugging or Build Release Binary? : (b) or (d) or (r)"
-read -r option
+option="$1"
 
 
 case "$option" in
-	d|D) 
+	"debug"|"DEBUG") 
 		echo "Building Binaries uVR_AT89S52 $VERSION : "
 		
 		mkdir -p "${DEBUG}${VERSION}${TIMEF}"/
@@ -21,7 +20,7 @@ case "$option" in
 		echo "Output File Generated : ${DEBUG}${VERSION}${TIMEF}/uvr_debug.hex"
 
 		;;
-	b|B) 
+	"buildsave"|"BUILDSAVE") 
 		echo "Building Binaries uVR_AT89S52 $VERSION : "
 		
 		mkdir -p "${BUILD}${VERSION}${TIMEF}"/
@@ -34,7 +33,7 @@ case "$option" in
 
 		;;
 	
-	r|R)
+	"rrlease"|"RELEASE")
 		echo "Building Release uVR_AT89S52 $VERSION : "
 		
 		mkdir -p "${RELEASE}${VERSION}"/
@@ -49,7 +48,7 @@ case "$option" in
 	
 	*)
 		echo "Invalid Selection!"
-		echo "usage d : Build Debug Binary , b : Build Project"
+		echo "usage debug : Build Debug Binary , buildsave : Build Project"
 		;;
 esac
 
