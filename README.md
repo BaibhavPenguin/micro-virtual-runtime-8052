@@ -1,4 +1,4 @@
-[![Build Status](![Static Badge](https://img.shields.io/badge/PASSSED%20-%20?style=flat-square&logoSize=%20&label=BUILD%20&labelColor=grey&color=green)
+[![Static Badge](https://img.shields.io/badge/PASSSED%20-%20?style=flat-square&logoSize=%20&label=BUILD%20&labelColor=grey&color=green)
 )](../../actions/workflows/build.yml)
 # **Micro Virtual Runtime (&micro;VR AT89S52)** <br>
 **Micro Virtual - R Copyright 2026 Baibhav Bhattacharya** <br>
