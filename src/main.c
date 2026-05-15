@@ -29,6 +29,8 @@ void init_sys(void){
 	is_input_buffer_reset = false;
 	is_programmed = false;
 
+	local_conditional_stack[skip_addr] = 255;
+	local_loop_stack[return_addr] = 255;
 	err_handler = NO_ERROR;
 	//Error Codes
 	
@@ -51,7 +53,7 @@ void init_serial(void){
 	TL1 = serial_baud_timer;	//Set Initial Value
 	TR1 = enable;					//Start Timer 1
 	SCON = 0x50;				//Serial Mode 1 , 8 Bit UART
-	TI = reset;
+	TI = set;
 	RI = reset;
 }
 void flush_inp_buffer(void){
@@ -80,8 +82,8 @@ void software_delay(void) __critical{
 
 
 void uart_send(char dat){
-	SBUF = dat;
 	while(!TI);
+	SBUF = dat;
 	TI = reset;
 }
 void echo(void){
@@ -241,7 +243,7 @@ void print_program_completed_msg(void){
 }
 
 
-static unsigned char fetch_data_variable(unsigned char identifier_id){
+static unsigned char fetch_variable_data(unsigned char identifier_id){
 	loop_counter = reset;
 	while(loop_counter < data_stack_limit){
 		if(virtual_data_stack[loop_counter][symbol] == identifier_id){
@@ -256,10 +258,14 @@ static unsigned char fetch_data_variable(unsigned char identifier_id){
 static void create_data_variable(unsigned char identifier_id){
 	loop_counter = reset;
 	while(loop_counter < data_stack_limit){
+		if((virtual_data_stack[loop_counter][symbol]) == identifier_id){
+			return;
+		}
 		if((virtual_data_stack[loop_counter][symbol]) == reset){
 			virtual_data_stack[loop_counter][symbol] = identifier_id;
 			return;
 		};
+		
 		loop_counter++;
 	};
 	loop_counter = reset;
@@ -439,8 +445,8 @@ static void unified_arithmetic_core(void){
 			op4 = op3;
 			break;
 		case dat_flag:
-			temp0 = fetch_data_variable(op2);
-			temp1 = fetch_data_variable(op3);
+			temp0 = fetch_variable_data(op2);
+			temp1 = fetch_variable_data(op3);
 			temp_integer = 0;
 			break;
 		default:
@@ -579,7 +585,7 @@ static void single_operand_logic_handler(void){
 	switch(instruction_buffer){
 		case cnot:
 			if(op1 == dat_flag){
-				temp0 = fetch_data_variable(op2);
+				temp0 = fetch_variable_data(op2);
 				temp0 = ~temp0;
 				assign_data_variable(op2,temp0);
 				break;
@@ -596,7 +602,7 @@ static void single_operand_logic_handler(void){
 
 		case cincrement:
 			if(op1 == dat_flag){
-				temp0 = fetch_data_variable(op2);
+				temp0 = fetch_variable_data(op2);
 				temp0++;
 				assign_data_variable(op2,temp0);
 				break;
@@ -612,7 +618,7 @@ static void single_operand_logic_handler(void){
 			break;
 		case cdecrement:
 			if(op1 == dat_flag){
-				temp0 = fetch_data_variable(op2);
+				temp0 = fetch_variable_data(op2);
 				temp0--;
 				assign_data_variable(op2,temp0);
 				break;
@@ -673,6 +679,18 @@ static inline void exit_handler(void){
 	is_programmed = true;
 	print_program_entered_msg();
 }
+static inline void fi_parser(void){
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = endifl;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = endifh;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = fcheckfi;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = scheckfi;
+	increment_virtual_program_counter();
+}
 static inline void prog_erase_handler(void){
 	loop_counter = reset;
 	while(loop_counter < 80){
@@ -698,7 +716,7 @@ static inline void print_handler(void){
 			temp_integer = result;
 			break;
 		default:
-			temp_integer = fetch_data_variable(op1);
+			temp_integer = fetch_variable_data(op1);
 	};
 
 	switch(op2){
@@ -725,23 +743,24 @@ static inline void print_handler(void){
 	};
 	
 }
-static inline void sleep_parser(void){
+static inline void unified_parser_data16(void){
 	unified_numeric_word_parser();
 	program_buffer[virtual_program_counter] = instruction_buffer;
 	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = (temp_integer &= 0xff);
+	program_buffer[virtual_program_counter] = temp_integer;
 	temp_integer = temp_integer >> 8;
 	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = (temp_integer &= 0xff);
+	program_buffer[virtual_program_counter] = temp_integer;
 	increment_virtual_program_counter();
 }
 static inline void sleep_handler(void){
-	increment_virtual_program_counter();
+	increment_virtual_program_counter(); //Instruction Buffer
+	increment_virtual_program_counter(); //Lower Byte
 	temp_integer = program_buffer[virtual_program_counter];
-	increment_virtual_program_counter();
 	temp_integer = temp_integer << 8;
+	virtual_program_counter--;
 	temp_integer |= program_buffer[virtual_program_counter];
-	temp_integer = temp_integer >> 8;
+	
 	software_delay();
 }
 static inline void define_handler(void){
@@ -768,7 +787,7 @@ static void lshift_handler(void){
 
 	switch(op1){
 		case dat_flag:
-			temp_integer = fetch_data_variable(op2);
+			temp_integer = fetch_variable_data(op2);
 			break;
 		case dot_result:
 			temp_integer = result;
@@ -811,7 +830,7 @@ static void rshift_handler(void){
 
 	switch(op1){
 		case dat_flag:
-			temp_integer = fetch_data_variable(op2);
+			temp_integer = fetch_variable_data(op2);
 			break;
 		case dot_result:
 			temp_integer = result;
@@ -878,7 +897,7 @@ static void hwport_handler(void){
 	};
 
 	if(op1 == operand_write){
-		temp0 = fetch_data_variable(op3);
+		temp0 = fetch_variable_data(op3);
 		switch(op2){
 			case port0:
 				P0 = temp0;
@@ -928,10 +947,149 @@ static inline void copy_handler(void){
 	increment_virtual_program_counter();
 	op2 = program_buffer[virtual_program_counter];
 
-	temp0 = fetch_data_variable(op1);
+	temp0 = fetch_variable_data(op1);
 	assign_data_variable(op2,temp0);
 
 }
+static void if_handler(void){
+	increment_virtual_program_counter();
+	temp3 = virtual_program_counter;
+	if(local_conditional_stack[skip_addr] < prog_buffer_size ){
+		goto condt_eval;
+	};
+	while(temp3 < 80){
+		if((program_buffer[temp3 + 1] == cfi)&&
+			(program_buffer[temp3 + 2] == endifl)&&
+			(program_buffer[temp3 + 3] == endifh)&&
+			(program_buffer[temp3 + 4] == fcheckfi)&&
+			(program_buffer[temp3 + 5] == scheckfi))
+		{
+			local_conditional_stack[skip_addr] = temp3 + 5;
+			break;
+		};
+		temp3++;
+		
+	}
+	
+
+	condt_eval:
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op3 = program_buffer[virtual_program_counter];
+
+	temp0 = fetch_variable_data(op1);
+	temp1 = fetch_variable_data(op3);
+
+	//DEBUG temp_integer = local_conditional_stack[skip_addr];
+	//DEBUG print_output_buffers_dec();uart_send('\r');uart_send('\n');
+	
+	switch(op2){
+		case operand_exceeds:
+			if(temp0 > temp1){
+				local_conditional_stack[condition] = true;
+				break;
+			};
+			local_conditional_stack[condition] = false;
+			break;
+		case operand_precedes:
+			if(temp0 < temp1){
+				local_conditional_stack[condition] = true;
+				break;
+			};
+			local_conditional_stack[condition] = false;
+			break;
+		case operand_equ:
+			if(temp0 == temp1){
+				local_conditional_stack[condition] = true;
+				break;
+			};
+			local_conditional_stack[condition] = false;
+			break;
+		case operand_neq:
+			if(temp0 != temp1){
+				local_conditional_stack[condition] = true;
+				break;
+			};
+			local_conditional_stack[condition] = false;
+			break;
+		default:
+			is_error = true;
+			err_handler = ERR_INVALID_TOKEN;
+	};
+
+
+	if(local_conditional_stack[condition] == false){
+		virtual_program_counter = local_conditional_stack[skip_addr];
+	}
+
+	return;
+
+
+
+}
+static void fi_handler(void){
+	temp0 = reset;
+	while(temp0 > 5){
+		increment_virtual_program_counter(); //cfi //endifl //endifh //fchecfi //scheckfi
+		temp0++;
+	};
+	local_conditional_stack[skip_addr] = 255;
+	local_conditional_stack[condition] = false;
+	return;
+	
+
+}
+static void move_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op2 = program_buffer[virtual_program_counter];
+	increment_virtual_program_counter();
+	op3 = program_buffer[virtual_program_counter];
+	
+	switch(op2){
+		case dat_flag:
+			temp_integer = fetch_variable_data(op3);
+			break;
+		case dot_result:
+			temp_integer = result;
+			break;
+		case dot_xword:
+			temp_integer = xword;
+			break;
+		default:
+			is_error = 1;
+			err_handler = ERR_INVALID_OPERAND;
+			return;
+	}
+	
+
+	move_val:
+	if(op1 == dot_result){
+		result = temp_integer;
+		return;
+	}
+	if(op1 == dot_xword){
+		xword = temp_integer;
+		return;
+	}
+	is_error = 1;
+	err_handler = ERR_INVALID_TOKEN;
+	return;
+}
+static void load_handler(void){
+	increment_virtual_program_counter(); //Insytruction Buffer
+	increment_virtual_program_counter(); //Lower Byte
+	temp_integer = program_buffer[virtual_program_counter];
+	temp_integer = temp_integer << 8;
+	virtual_program_counter--;
+	temp_integer |= program_buffer[virtual_program_counter];
+	result = temp_integer;
+}
+
+
 
 //==================================================================================
 
@@ -1151,7 +1309,7 @@ static inline void runtime_command_parser(void){
 		case cdecrement:
 			dual_operand_line_parser();
 			break;
-		case cload:
+		case cmove:
 		case cif:
 		case hwport:
 			tri_operand_line_parser();
@@ -1160,11 +1318,15 @@ static inline void runtime_command_parser(void){
 			exit_handler();
 			break;
 		case csleep:
-			sleep_parser();
+		case cload:
+			unified_parser_data16();
 			break;
 		case cgoto:
 		case cdefine:
 			single_operand_line_parser();
+			break;
+		case cfi:
+			fi_parser();
 			break;
 		case cend:
 			end_parser();
@@ -1211,6 +1373,9 @@ void runtime_command_exec(void){
 			case csleep:
 				sleep_handler();
 				break;
+			case cif:
+				if_handler();
+				break;
 			case crshift:
 				rshift_handler();
 				break;
@@ -1229,6 +1394,12 @@ void runtime_command_exec(void){
 			case ccopy:
 				copy_handler();
 				break;
+			case cmove:
+				move_handler();
+				break;
+			case cload:
+				load_handler();
+				break;
 			case cend:
 				end_handler();
 				break;
@@ -1238,6 +1409,8 @@ void runtime_command_exec(void){
 		}
 		if(is_error){
 			//print_program_error_code();
+			// DEBUG temp_integer = virtual_program_counter;
+			// DEBUG print_output_buffers_dec();
 			state_executing_script = false;
 			is_success = false;
 		}

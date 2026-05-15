@@ -25,12 +25,14 @@ static inline void assign_handler(void);
 
 static void rshift_handler(void);
 static void lshift_handler(void);
-static inline void if_handler(void);
+static void if_handler(void);
 static inline void hwport_handler(void);
-static void toggle_handler(void);
+
 
 static inline void copy_handler(void);
+static void fi_handler(void);
 
+static void load_handler(void);
 
 
 

@@ -21,8 +21,8 @@
 
 #define cerase 23   //erase   --done (message left)
 
+#define cmove 181   //.move
 
-#define ctoggle 209  //.toggle  --done 
 #define hwport 100  //.hwport   --done
 #define cdefine 37  // .define  --done
 #define cprog 117   // prog     --done
@@ -41,11 +41,11 @@
 #define cassign 176 // .assign  --done
 
 #define cdelete 65  // .delete
-#define cload 250   //.load
-#define ccopy 125    //.copy
-#define cif 168     // .if       
+#define cload 250   //.load --done 
+#define ccopy 125    //.copy    --done
+#define cif 168     // .if   --done    
 #define cloop 146   // .loop    
-#define cfi 141     // .fi
+
 #define cgoto 59    // .goto
 #define cblock 21   // .block
 
@@ -55,11 +55,14 @@
 #define crshift 212 // rshift   --done
 #define clshift 20  // lshift   --done
 
-
-
-
+#define cfi 141      // .fi     --done
+#define endifl 30
+#define endifh 30
+#define fcheckfi 225
+#define scheckfi 255
 
 // cls handling done by clear_terminal system routine.
 
 
 #endif  //command_h
+

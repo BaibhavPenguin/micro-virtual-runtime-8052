@@ -1,9 +1,16 @@
 #ifndef virtual_stack_manager_h
 #define virtual_stack_manager_h
 
-#define data_stack_limit 10
+#define data_stack_limit 8
 #define symbol 0
 #define data_segment 1
+
+#define loop_var 0
+#define return_addr 1
+
+#define condition 0
+#define skip_addr 1
+
 
 static unsigned char fetch_data_variable(unsigned char);
 static void create_data_variable(unsigned char);

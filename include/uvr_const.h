@@ -22,6 +22,9 @@
 
 #define buffer_size 32
 
+#define prog_buffer_size 80
+
+
 
 
 
@@ -88,6 +91,7 @@ __code static char running_program_msg[35] = "\033[33mExecuting script at runtim
 #define ERR_NONPERMITTED_ACCESS 0x05
 #define ERR_INVALID_BLOCK 0x06
 #define ERR_INVALID_OPERAND 0x07
+#define ERR_MISSING_FI 0x08
 #define NO_ERROR 0x00
 
 

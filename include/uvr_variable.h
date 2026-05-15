@@ -31,7 +31,9 @@ volatile unsigned int __data __at (0x3E) result = 0;
 //=============================== MULTIPLEXED BUFFER ===========================================
 
 volatile unsigned char __data __at (0x40) input_buffer[32] = {0};
-volatile unsigned char __data __at (0x60) virtual_data_stack[10][2] = {{0}};
+volatile unsigned char __data __at (0x60) virtual_data_stack[8][2] = {{0}};
+volatile unsigned char __data __at(0x71) local_loop_stack[2] = {0};
+volatile unsigned char __data __at(0x73) local_conditional_stack[2] = {0};
 volatile unsigned char __data __at (0x75) result_char_buffer[5] = {'0'};
 volatile unsigned int __data __at(0x7A) temp_integer = 0;
 
