@@ -33,7 +33,7 @@ case "$option" in
 
 		;;
 	
-	"rrlease"|"RELEASE")
+	"release"|"RELEASE")
 		echo "Building Release uVR_AT89S52 $VERSION : "
 		
 		mkdir -p "${RELEASE}${VERSION}"/

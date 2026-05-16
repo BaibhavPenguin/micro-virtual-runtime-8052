@@ -72,6 +72,13 @@ __code static char program_entered_msg[57] = "\033[0mProgram loaded in memory, u
 
 #define len_running_program_msg 35
 __code static char running_program_msg[35] = "\033[33mExecuting script at runtime\r\n";
+
+
+#define len_prog_erased 18
+__code static char program_erased_msg[18] = "Program Erased!\r\n";
+
+
+
 //================================= System Definitions ==================================
 
 #define supported_ansi_color_operands 0x08 //Supported Colors 

@@ -73,14 +73,17 @@ void flush_inp_buffer(void){
 void software_delay(void) __critical{
 	unsigned int tempY;
 	unsigned int tempX;
+	
 		for(tempX = 0 ; tempX < temp_integer ;tempX++){
 			for(tempY = 0 ; tempY < 1275 ; tempY++){
-				;
+					;
 			};
 		};
 
+	
+		
 	return;
-} // CHANGE TO 3350 LATER
+} 
 
 
 void uart_send(char dat){
@@ -274,6 +277,26 @@ void print_program_error_code(void){
 	uart_send('\r');uart_send('\n');
 }
 
+void reset_stack(void){
+	loop_counter = reset;
+	while(loop_counter < data_stack_limit){
+		virtual_data_stack[loop_counter][0] = reset;
+		virtual_data_stack[loop_counter][1] = reset;
+		loop_counter++;
+	};
+	loop_counter = reset;
+	while(loop_counter < call_stack_limit){
+		virtual_call_stack[loop_counter][0] = reset;
+		virtual_call_stack[loop_counter][1] = reset;
+		loop_counter++;
+	};
+	local_conditional_stack[0] = reset;
+	local_conditional_stack[1] = 255;
+	
+	local_loop_stack[0] = reset;
+	local_loop_stack[1] = reset;
+
+}
 
 static unsigned char fetch_variable_data(unsigned char identifier_id){
 	loop_counter = reset;
@@ -324,21 +347,6 @@ static void assign_data_variable(unsigned char identifier_id , unsigned char dat
 	virtual_data_stack[temp3][data_segment] = data;
 	return;
 }
-static void delete_data_variable(unsigned char identifier_id){
-	loop_counter = reset;
-	while(loop_counter < data_stack_limit){
-		if(virtual_data_stack[loop_counter][symbol] == identifier_id){
-			virtual_data_stack[loop_counter][symbol] = reset;
-			virtual_data_stack[loop_counter][data_segment] = reset;
-		}
-		loop_counter++;
-	}
-	is_error = true;
-	err_handler = ERR_INVALID_TOKEN;
-	return;
-}
-
-
 static void allocate_callable_block(unsigned char block_id , unsigned char address){
 	loop_counter = reset;
 	while(loop_counter < call_stack_limit){
@@ -366,20 +374,6 @@ unsigned char fetch_block_address(unsigned char block_id){
 	is_error = 1;
 	err_handler = ERR_CALL_STACK_OVERFLOW;
 	return 255;
-}
-static void delele_callable_block(unsigned char block_id){
-	loop_counter = reset;
-	while(loop_counter < call_stack_limit){
-		if(virtual_call_stack[loop_counter][block_seg] == block_id){
-			
-			virtual_call_stack[loop_counter][block_seg] = reset;
-			virtual_call_stack[loop_counter][return_addr] = reset;
-			return;
-		};
-		loop_counter++;
-	}
-	is_error = true;
-	err_handler = ERR_CALL_STACK_OVERFLOW;
 }
 
 
@@ -781,6 +775,11 @@ static inline void prog_erase_handler(void){
 		program_buffer[loop_counter] = 0;
 		loop_counter++;
 	}
+	loop_counter = reset;
+	while(loop_counter < len_prog_erased){
+		uart_send(program_erased_msg[loop_counter]);
+		loop_counter++;
+	};
 	loop_counter = reset;
 	is_programmed = false;
 	//print_prog_erased_msg();
@@ -1364,6 +1363,14 @@ static inline void runtime_state_cleanup(void){
 	if(is_success){
 		print_success_message();
 		is_success = false;
+
+		result = reset;
+		xword = reset;
+		op1 = reset;
+		op2 = reset;
+		op3 = reset;
+		op4 = reset;
+		
 	};
 
 	if(is_error){
@@ -1578,8 +1585,6 @@ void runtime_command_exec(void){
 			
 		};
 		if(is_error){
-			// DEBUG temp_integer = virtual_program_counter;
-			// DEBUG print_output_buffers_dec();
 			state_executing_script = false;
 			is_success = false;
 		};
@@ -1587,10 +1592,7 @@ void runtime_command_exec(void){
 	}
 	TR2 = disable; 			//Disable timer2 after execution
 	virtual_program_counter = reset;
-	
-	
-
-	
+	reset_stack();
 }
 
 
