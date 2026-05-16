@@ -31,6 +31,7 @@ static inline void assign_parser(void);
 static void dual_operand_line_parser(void);  //increment //decrement //not //delete //print //assign
 
 static inline void fi_parser(void);
+static inline void pool_parser(void);
 
 static void if_parser(void);
 static inline void hwport_parser(void);

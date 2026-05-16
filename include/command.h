@@ -61,7 +61,16 @@
 #define fcheckfi 225
 #define scheckfi 255
 
+
+
 // cls handling done by clear_terminal system routine.
+#define cbreak 137  //.break
+
+#define cpool 46    // .pool
+#define endloopl 64
+#define endlooph 46
+#define fcheckloop 64
+#define scheckloop 46
 
 
 #endif  //command_h

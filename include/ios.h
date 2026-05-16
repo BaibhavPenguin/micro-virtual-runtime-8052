@@ -21,5 +21,5 @@ void print_program_entered_msg(void);
 void print_program_execution_msg(void);
 
 void print_program_completed_msg(void);
-
+void print_program_error_code(void);
 #endif //ios_h

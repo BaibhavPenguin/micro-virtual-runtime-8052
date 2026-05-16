@@ -18,7 +18,6 @@ void init_sys(void){
 	is_recieved = false;
 	is_error = false;
 	echo_e = false;
-	hardware_operation_input = true;
 	wr_pointer = &input_buffer[0];
 	rd_pointer = &input_buffer[0];
 	ip_buffer_agent = reset;
@@ -32,6 +31,8 @@ void init_sys(void){
 	local_conditional_stack[skip_addr] = 255;
 	local_loop_stack[return_addr] = 255;
 	err_handler = NO_ERROR;
+
+	is_looping = false;
 	//Error Codes
 	
 } 
@@ -68,6 +69,7 @@ void flush_inp_buffer(void){
 	loop_counter = reset;
 	is_input_buffer_reset = true;
 }
+
 void software_delay(void) __critical{
 	unsigned int tempY;
 	unsigned int tempX;
@@ -78,7 +80,7 @@ void software_delay(void) __critical{
 		};
 
 	return;
-}
+} // CHANGE TO 3350 LATER
 
 
 void uart_send(char dat){
@@ -241,6 +243,36 @@ void print_program_completed_msg(void){
 	uart_send(esc_char);uart_send('[');uart_send('0');uart_send('m');
 
 }
+void print_program_error_code(void){
+	loop_counter = reset;
+	while(loop_counter != len_error_code){
+		uart_send(error_msg[loop_counter]);
+		loop_counter++;
+	};
+
+	switch(err_handler){
+		case ERR_ZERO_DIVISION: 
+			uart_send('0');uart_send('x');uart_send('0');uart_send('1');uart_send('C');uart_send('D');uart_send('C');
+			break;
+		case ERR_INVALID_TOKEN:
+			uart_send('0');uart_send('x');uart_send('0');uart_send('2');uart_send('C');uart_send('D');uart_send('C');
+			break;
+		case ERR_DATA_STACK_OVERFLOW:
+			uart_send('0');uart_send('x');uart_send('0');uart_send('3');uart_send('C');uart_send('D');uart_send('C');
+			break;
+		case ERR_CALL_STACK_OVERFLOW:
+			uart_send('0');uart_send('x');uart_send('0');uart_send('4');uart_send('C');uart_send('D');uart_send('C');
+			break;
+		case ERR_MISSING_FI:
+			uart_send('0');uart_send('x');uart_send('0');uart_send('A');uart_send('C');uart_send('D');uart_send('C');
+			break;
+		case ERR_GENERIC_EXEC_FAILURE:
+			uart_send('0');uart_send('x');uart_send('F');uart_send('F');uart_send('C');uart_send('D');uart_send('C');
+			break;
+			
+	}
+	uart_send('\r');uart_send('\n');
+}
 
 
 static unsigned char fetch_variable_data(unsigned char identifier_id){
@@ -307,7 +339,48 @@ static void delete_data_variable(unsigned char identifier_id){
 }
 
 
-
+static void allocate_callable_block(unsigned char block_id , unsigned char address){
+	loop_counter = reset;
+	while(loop_counter < call_stack_limit){
+		if(virtual_call_stack[loop_counter][block_seg] == block_id){
+			return;
+		};
+		if(virtual_call_stack[loop_counter][block_seg] == reset){
+			virtual_call_stack[loop_counter][block_seg] = block_id;
+			virtual_call_stack[loop_counter][return_addr] = address;
+			return;
+		}
+		loop_counter++;
+	};
+	is_error = true;
+	err_handler = ERR_INVALID_TOKEN;
+}
+unsigned char fetch_block_address(unsigned char block_id){
+	loop_counter = reset;
+	while(loop_counter < call_stack_limit){
+		if(virtual_call_stack[loop_counter][block_seg] == block_id){
+			return virtual_call_stack[loop_counter][return_addr];
+		};
+		loop_counter++;
+	};
+	is_error = 1;
+	err_handler = ERR_CALL_STACK_OVERFLOW;
+	return 255;
+}
+static void delele_callable_block(unsigned char block_id){
+	loop_counter = reset;
+	while(loop_counter < call_stack_limit){
+		if(virtual_call_stack[loop_counter][block_seg] == block_id){
+			
+			virtual_call_stack[loop_counter][block_seg] = reset;
+			virtual_call_stack[loop_counter][return_addr] = reset;
+			return;
+		};
+		loop_counter++;
+	}
+	is_error = true;
+	err_handler = ERR_CALL_STACK_OVERFLOW;
+}
 
 
 unsigned char unified_numeric_parser(void){
@@ -408,8 +481,30 @@ static void quad_operand_line_parser(void){
 
 
 }
-
-
+static inline void fi_parser(void){
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = endifl;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = endifh;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = fcheckfi;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = scheckfi;
+	increment_virtual_program_counter();
+}
+static inline void pool_parser(void){
+	program_buffer[virtual_program_counter] = instruction_buffer;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = endloopl;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = endlooph;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = fcheckloop;
+	increment_virtual_program_counter();
+	program_buffer[virtual_program_counter] = scheckloop;
+	increment_virtual_program_counter();
+}
 
 
 static void unified_arithmetic_core(void){
@@ -679,18 +774,7 @@ static inline void exit_handler(void){
 	is_programmed = true;
 	print_program_entered_msg();
 }
-static inline void fi_parser(void){
-	program_buffer[virtual_program_counter] = instruction_buffer;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = endifl;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = endifh;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = fcheckfi;
-	increment_virtual_program_counter();
-	program_buffer[virtual_program_counter] = scheckfi;
-	increment_virtual_program_counter();
-}
+
 static inline void prog_erase_handler(void){
 	loop_counter = reset;
 	while(loop_counter < 80){
@@ -964,7 +1048,7 @@ static void if_handler(void){
 			(program_buffer[temp3 + 4] == fcheckfi)&&
 			(program_buffer[temp3 + 5] == scheckfi))
 		{
-			local_conditional_stack[skip_addr] = temp3 + 5;
+			local_conditional_stack[skip_addr] = temp3;
 			break;
 		};
 		temp3++;
@@ -1041,6 +1125,60 @@ static void fi_handler(void){
 	
 
 }
+
+static void loop_handler(void){
+	increment_virtual_program_counter();
+	if(is_looping == true){
+		return;
+	};
+	op1 = program_buffer[virtual_program_counter];
+	op1--;
+	local_loop_stack[loop_var] = op1;
+	local_loop_stack[return_addr] = virtual_program_counter;
+	is_looping = true;
+}
+static void pool_handler(void){
+	temp0 = local_loop_stack[loop_var];
+	
+	if(temp0 > 0){
+		is_looping = true;
+		temp0--;
+		local_loop_stack[loop_var] = temp0;
+		virtual_program_counter = local_loop_stack[return_addr];
+		return;
+	};
+	local_loop_stack[loop_var] = 0;
+	local_loop_stack[return_addr] = 0;
+	is_looping = false;
+	temp0 = reset;
+	while(temp0 > 5){
+		increment_virtual_program_counter(); //cfi //endifl //endifh //fchecfi //scheckfi
+		temp0++;
+	};
+	
+
+}
+
+static void break_handler(void){
+	if(is_looping == false){
+		return;
+	}
+	temp3 = virtual_program_counter;
+	while(temp3 < 80){
+		if((program_buffer[temp3 + 1] == cpool)&&
+			(program_buffer[temp3 + 2] == endloopl)&&
+			(program_buffer[temp3 + 3] == endlooph)&&
+			(program_buffer[temp3 + 4] == fcheckloop)&&
+			(program_buffer[temp3 + 5] == scheckloop))
+		{
+			local_loop_stack[loop_var] = reset;
+			virtual_program_counter = temp3;
+			break;
+		};
+		temp3++;
+		
+	}
+}
 static void move_handler(void){
 	increment_virtual_program_counter();
 	op1 = program_buffer[virtual_program_counter];
@@ -1087,6 +1225,18 @@ static void load_handler(void){
 	virtual_program_counter--;
 	temp_integer |= program_buffer[virtual_program_counter];
 	result = temp_integer;
+}
+
+static inline void block_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	allocate_callable_block(op1,virtual_program_counter);
+}
+static inline void goto_handler(void){
+	increment_virtual_program_counter();
+	op1 = program_buffer[virtual_program_counter];
+	temp0 = fetch_block_address(op1);
+	virtual_program_counter = temp0;
 }
 
 
@@ -1217,6 +1367,7 @@ static inline void runtime_state_cleanup(void){
 	};
 
 	if(is_error){
+		print_program_error_code();
 		print_invalid_cmd();
 		runtime_fail_restore_seq();
 		is_error = false;
@@ -1300,7 +1451,6 @@ static inline void runtime_command_parser(void){
 			quad_operand_line_parser();
 			break;
 		case cloop:
-		case cblock:
 		case cprint:
 		case cassign:
 		case ccopy:
@@ -1321,6 +1471,7 @@ static inline void runtime_command_parser(void){
 		case cload:
 			unified_parser_data16();
 			break;
+		case cblock:
 		case cgoto:
 		case cdefine:
 			single_operand_line_parser();
@@ -1328,8 +1479,12 @@ static inline void runtime_command_parser(void){
 		case cfi:
 			fi_parser();
 			break;
+		case cbreak:
 		case cend:
 			end_parser();
+			break;
+		case cpool:
+			pool_parser();
 			break;
 		case no_op:
 			break;
@@ -1400,20 +1555,34 @@ void runtime_command_exec(void){
 			case cload:
 				load_handler();
 				break;
+			case cloop:
+				loop_handler();
+				break;
+			case cpool:
+				pool_handler();
+				break;
+			case cbreak:
+				break_handler();
+				break;
+			case cgoto:
+				goto_handler();
+				break;
+			case cblock:
+				block_handler();
+				break;
 			case cend:
 				end_handler();
 				break;
 			default:
 				
 			
-		}
+		};
 		if(is_error){
-			//print_program_error_code();
 			// DEBUG temp_integer = virtual_program_counter;
 			// DEBUG print_output_buffers_dec();
 			state_executing_script = false;
 			is_success = false;
-		}
+		};
 		increment_virtual_program_counter();
 	}
 	TR2 = disable; 			//Disable timer2 after execution

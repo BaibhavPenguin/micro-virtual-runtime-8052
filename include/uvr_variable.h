@@ -56,7 +56,7 @@ __bit __at(0x02) is_error;
 __bit __at(0x03) echo_e;
 __bit __at(0x04) is_success;
 __bit __at(0x05) machine_state;
-__bit __at(0x06) hardware_operation_input;
+__bit __at(0x06) is_looping;
 __bit __at(0x07) backspace_block;
 __bit __at(0x08) state_programming_enabled;
 __bit __at(0x09) is_requesting_syscall_access;

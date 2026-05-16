@@ -31,8 +31,11 @@ static inline void hwport_handler(void);
 
 static inline void copy_handler(void);
 static void fi_handler(void);
-
+static void pool_handler(void);
 static void load_handler(void);
+static void break_handler(void);
+static inline void block_handler(void);
+static inline void goto_handler(void);
 
 
 
